@@ -1,0 +1,1349 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>⚡ B마트 정전 긴급대응</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #F0FAFA; color: #1A1A1A; font-size: 15px; }
+
+  /* ── 헤더 ── */
+  .header {
+    position: sticky; top: 0; z-index: 100;
+    background: #2AC1BC; padding: 12px 14px;
+    display: flex; align-items: center; gap: 8px;
+    box-shadow: 0 2px 8px rgba(42,193,188,.25);
+  }
+  .header h1 { font-size: 17px; font-weight: 800; color: #fff; flex: 1; }
+  .header .clock { font-size: 12px; color: rgba(255,255,255,.85); }
+
+  /* ── 메인 탭 (2개) ── */
+  .main-tabs {
+    position: sticky; top: 46px; z-index: 90;
+    display: flex; background: #fff;
+    border-bottom: 2px solid #E0F5F5;
+    box-shadow: 0 1px 4px rgba(42,193,188,.1);
+  }
+  .main-tab {
+    flex: 1; padding: 11px 8px; text-align: center;
+    font-size: 13px; font-weight: 800; color: #aaa;
+    cursor: pointer; border-bottom: 3px solid transparent;
+    -webkit-tap-highlight-color: transparent;
+    transition: color .15s;
+  }
+  .main-tab.active { color: #2AC1BC; border-bottom-color: #2AC1BC; }
+  .main-tab .tab-icon { font-size: 18px; display: block; margin-bottom: 2px; }
+
+  /* ── 뷰 ── */
+  .main-view { display: none; padding-bottom: 40px; }
+  .main-view.active { display: block; }
+
+  /* ── 온도 바 ── */
+  .temp-bar {
+    margin: 10px 14px; padding: 9px 12px; border-radius: 9px;
+    background: #E6F7F7; border: 1.5px solid #2AC1BC;
+    display: flex; align-items: center; gap: 8px; font-size: 13px;
+  }
+  .temp-bar strong { color: #0E7490; }
+
+  /* ── 타임 카드 ── */
+  .time-card { border-bottom: 1px solid #E6F7F7; background: #fff; }
+  .time-card-header {
+    display: flex; align-items: center; gap: 9px;
+    padding: 12px 14px; cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .time-card-header:active { background: #F0FAFA; }
+  .time-badge {
+    flex-shrink: 0; padding: 5px 10px; border-radius: 14px;
+    font-size: 12px; font-weight: 800; color: #fff; white-space: nowrap;
+  }
+  .badge-red    { background: #EF4444; }
+  .badge-orange { background: #F59E0B; }
+  .badge-yellow { background: #D97706; }
+  .badge-green  { background: #2AC1BC; }
+  .badge-purple { background: #8B5CF6; }
+  .badge-gray   { background: #6B7280; }
+
+  .time-card-title { font-size: 14px; font-weight: 700; flex: 1; color: #1A1A1A; }
+  .chevron { font-size: 18px; color: #AAAAAA; transition: transform .2s; }
+  .time-card-header.open .chevron { transform: rotate(90deg); }
+
+  .time-card-body { display: none; padding: 0 14px 14px; background: #fff; }
+  .time-card-body.open { display: block; }
+
+  /* ── WHAT 박스 ── */
+  .card-what {
+    background: linear-gradient(135deg, rgba(42,193,188,.12), rgba(42,193,188,.05));
+    border: 1px solid #B2E8E6; border-left: 4px solid #2AC1BC;
+    border-radius: 8px; padding: 11px 12px; margin-bottom: 8px;
+  }
+  .card-what-title {
+    font-size: 15px; font-weight: 800; color: #0E7490;
+    display: flex; align-items: flex-start; gap: 8px; line-height: 1.4;
+  }
+  .card-what-emoji { flex-shrink: 0; font-size: 18px; }
+
+  /* ── 액션 리스트 ── */
+  .action-list { list-style: none; margin: 6px 0; }
+  .action-list li {
+    padding: 7px 0; border-bottom: 1px solid #E6F7F7;
+    font-size: 13px; line-height: 1.5; color: #333;
+    display: flex; gap: 8px;
+  }
+  .action-list li:last-child { border-bottom: none; }
+  .action-list li::before { content: "▸"; color: #2AC1BC; flex-shrink: 0; margin-top: 1px; font-weight: 800; }
+  .action-list li small { display: block; color: #777; font-size: 11px; margin-top: 2px; }
+
+  /* ── 노트·경고 ── */
+  .note {
+    margin-top: 8px; padding: 8px 11px; border-radius: 7px;
+    background: #E6F7F7; border-left: 3px solid #2AC1BC;
+    font-size: 12px; color: #0E7490; line-height: 1.5;
+  }
+  .warn {
+    margin-top: 8px; padding: 8px 11px; border-radius: 7px;
+    background: #FEF9C3; border-left: 3px solid #F4B400;
+    font-size: 12px; color: #854D0E; line-height: 1.5;
+  }
+
+  /* ── 슬랙 토글 ── */
+  .slack-toggle {
+    margin-top: 8px; padding: 8px 11px; border-radius: 7px;
+    background: #E6F7F7; border: 1px solid #2AC1BC;
+    font-size: 12px; font-weight: 700; color: #0E7490;
+    cursor: pointer; display: flex; align-items: center; gap: 6px;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .slack-toggle .s-chevron { margin-left: auto; transition: transform .2s; }
+  .slack-toggle.open .s-chevron { transform: rotate(90deg); }
+  .slack-box { display: none; margin-top: 6px; }
+  .slack-box.open { display: block; }
+  .slack-channel { font-size: 10px; color: #999; margin-bottom: 4px; padding-left: 2px; }
+  .slack-msg {
+    background: #F0FAFA; border-left: 3px solid #2AC1BC;
+    border-radius: 7px; padding: 10px 12px;
+    font-size: 12px; line-height: 1.6; color: #333;
+    white-space: pre-wrap; word-break: break-word;
+  }
+  .copy-btn {
+    margin-top: 6px; padding: 8px; background: #F0FAFA;
+    border: 1px solid #B2E8E6; border-radius: 6px;
+    color: #2AC1BC; font-size: 11px; width: 100%;
+    cursor: pointer; text-align: center; font-weight: 700;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .copy-btn.copied { color: #0E7490; background: #E6F7F7; }
+
+  /* ── 사진 슬롯 ── */
+  .photo-section {
+    margin-top: 10px; padding-top: 10px; border-top: 1.5px solid #E6F7F7;
+  }
+  .photo-section-title {
+    font-size: 12px; font-weight: 700; color: #0E7490; margin-bottom: 8px;
+    display: flex; align-items: center; gap: 5px;
+  }
+  .photo-grid { display: flex; gap: 8px; }
+  .photo-slot {
+    flex: 1; border: 2px dashed #B2E8E6; border-radius: 8px;
+    padding: 10px 4px; text-align: center; color: #2AC1BC;
+    font-size: 10px; cursor: pointer;
+    position: relative; overflow: hidden; background: #F8FEFE;
+    min-height: 80px; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 4px;
+  }
+  .photo-slot input[type=file] {
+    position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+  }
+  .photo-slot img { max-width: 100%; max-height: 120px; border-radius: 5px; display: none; }
+  .photo-slot .slot-icon { font-size: 22px; pointer-events: none; }
+  .photo-slot .slot-label { pointer-events: none; font-weight: 600; line-height: 1.3; }
+  .photo-slot .slot-delete {
+    display: none; position: absolute; top: 4px; right: 4px;
+    background: rgba(239,68,68,.85); color: #fff; border: none;
+    border-radius: 50%; width: 20px; height: 20px; font-size: 11px;
+    cursor: pointer; z-index: 10; line-height: 1;
+  }
+
+  /* ── 단계 ── */
+  .step { display: flex; gap: 10px; margin-bottom: 11px; padding-bottom: 11px; border-bottom: 1px solid #E6F7F7; }
+  .step:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+  .step-num {
+    flex-shrink: 0; width: 24px; height: 24px; border-radius: 50%;
+    background: #2AC1BC; color: #fff; font-size: 11px; font-weight: 800;
+    display: flex; align-items: center; justify-content: center; margin-top: 1px;
+  }
+  .step-content { flex: 1; }
+  .step-content h5 { font-size: 13px; font-weight: 700; margin-bottom: 4px; color: #1A1A1A; }
+  .step-items { list-style: none; }
+  .step-items li { font-size: 12px; color: #555; line-height: 1.5; padding: 2px 0; }
+
+  /* ── 타임라인 뷰 ── */
+  .tl-section-label {
+    background: #2AC1BC; color: #fff;
+    font-size: 11px; font-weight: 800; padding: 6px 14px;
+    letter-spacing: .06em;
+  }
+
+  .tl-row {
+    border-bottom: 1px solid #E6F7F7; background: #fff;
+  }
+  .tl-row-header {
+    display: flex; align-items: center; gap: 9px;
+    padding: 11px 14px; cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .tl-row-header:active { background: #F0FAFA; }
+  .tl-row-header.open .chevron { transform: rotate(90deg); }
+
+  .tl-row-body { display: none; padding: 0 14px 14px; }
+  .tl-row-body.open { display: block; }
+
+  /* PPC 행동 강조 박스 */
+  .tl-ppc {
+    background: linear-gradient(135deg, rgba(42,193,188,.13), rgba(42,193,188,.05));
+    border: 1px solid #B2E8E6; border-left: 4px solid #2AC1BC;
+    border-radius: 8px; padding: 10px 12px; margin-bottom: 8px;
+  }
+  .tl-ppc-label {
+    font-size: 10px; font-weight: 800; color: #2AC1BC;
+    letter-spacing: .08em; margin-bottom: 5px;
+  }
+  .tl-ppc-actions { font-size: 13px; font-weight: 700; color: #0E7490; line-height: 1.7; }
+  .tl-ppc-actions li { list-style: none; padding-left: 14px; position: relative; }
+  .tl-ppc-actions li::before { content: '→'; position: absolute; left: 0; color: #2AC1BC; font-weight: 900; }
+
+  /* 유관부서 행동 */
+  .tl-depts { display: flex; flex-direction: column; gap: 5px; }
+  .tl-dept-item {
+    background: #F8F8F8; border-left: 3px solid #ccc;
+    border-radius: 0 6px 6px 0; padding: 7px 10px;
+    font-size: 12px; color: #555; line-height: 1.55;
+  }
+  .tl-dept-item.dept-gm   { border-left-color: #3B82F6; }
+  .tl-dept-item.dept-space{ border-left-color: #8B5CF6; }
+  .tl-dept-item.dept-qa   { border-left-color: #F59E0B; }
+  .tl-dept-item.dept-it   { border-left-color: #6B7280; }
+  .tl-dept-name {
+    font-size: 10px; font-weight: 800; margin-bottom: 3px;
+  }
+  .dept-gm   .tl-dept-name { color: #3B82F6; }
+  .dept-space .tl-dept-name { color: #8B5CF6; }
+  .dept-qa   .tl-dept-name { color: #F59E0B; }
+  .dept-it   .tl-dept-name { color: #6B7280; }
+
+  /* 복구 분기 배지 */
+  .tl-recovery {
+    background: #D1FAE5; border: 1.5px solid #2AC1BC;
+    border-radius: 8px; padding: 10px 12px; margin-bottom: 8px;
+  }
+  .tl-recovery-label {
+    font-size: 10px; font-weight: 800; color: #059669;
+    letter-spacing: .08em; margin-bottom: 5px;
+  }
+  .tl-recovery-actions { font-size: 13px; font-weight: 700; color: #065F46; line-height: 1.7; }
+  .tl-recovery-actions li { list-style: none; padding-left: 14px; position: relative; }
+  .tl-recovery-actions li::before { content: '✓'; position: absolute; left: 0; color: #059669; }
+
+  .footer { padding: 20px 14px; text-align: center; color: #999; font-size: 11px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <span style="font-size:20px">⚡</span>
+  <h1>B마트 정전 긴급대응</h1>
+  <span class="clock" id="clock"></span>
+</div>
+
+<div class="main-tabs">
+  <div class="main-tab active" onclick="switchTab('ppc')" id="tab-ppc">
+    <span class="tab-icon">🏭</span>PPC 조치
+  </div>
+  <div class="main-tab" onclick="switchTab('timeline')" id="tab-timeline">
+    <span class="tab-icon">📊</span>정전대응 타임라인
+  </div>
+</div>
+
+
+<!-- =====================================================
+     탭 1 : PPC 조치
+====================================================== -->
+<div class="main-view active" id="view-ppc">
+
+  <div class="temp-bar">
+    <span style="font-size:18px">🌡️</span>
+    <span><strong>냉동 -15°C · 냉장 10°C 초과</strong> → 즉시 슬랙 공유</span>
+  </div>
+
+  <!-- ── 즉시 ── -->
+  <div class="time-card">
+    <div class="time-card-header open" onclick="toggle(this)">
+      <span class="time-badge badge-red">⚡ 즉시</span>
+      <span class="time-card-title">집결 · 1차 보고</span>
+      <span class="chevron">›</span>
+    </div>
+    <div class="time-card-body open">
+      <div class="card-what">
+        <div class="card-what-title">
+          <span class="card-what-emoji">🚨</span>
+          <span>구성원 전체 작업 중단 → 패킹대 앞 집결</span>
+        </div>
+      </div>
+      <ul class="action-list">
+        <li>전원 집결 여부 파악 후 긴급상황대응방 워크플로우 제출<small>#wg-워크플레이스실_ppc_긴급상황대응방</small></li>
+        <li>GM 유선 보고 (부재 시 팀장 / 관리자 부재 시 선임크루 총괄)</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ── 5분 ── -->
+  <div class="time-card">
+    <div class="time-card-header open" onclick="toggle(this)">
+      <span class="time-badge badge-red">5분</span>
+      <span class="time-card-title">관리소 방문 · 2차 보고</span>
+      <span class="chevron">›</span>
+    </div>
+    <div class="time-card-body open">
+      <div class="card-what">
+        <div class="card-what-title">
+          <span class="card-what-emoji">🏢</span>
+          <span>관리소 대면 방문 → 결과 슬랙 공유</span>
+        </div>
+      </div>
+      <ul class="action-list">
+        <li>관리소 대면 방문 후 결과 공유
+          <small>관리인 있을 때: 정전 원인 / 복전 예상 시간 / 비상발전기 보유 여부 확인</small>
+          <small>관리인 없을 때: 정전 범위 파악 (B마트 전유 층 / 건물 전체 / 인근 지역 일대) + 외부 사진 촬영</small>
+        </li>
+        <li>관리소 방문 후 분전반 사진 촬영 → 슬랙 공유<small>스파크·탄내 여부 확인 필수</small></li>
+        <li>피킹중 바구니 온도별 구분 보관 / 주문취소 준비
+          <small>보관 전 온도 이탈 여부 확인 (냉동 -18°C 이하, 냉장 10°C 이하)</small>
+          <small>정상 온도일 경우 1시간 동안 워크인 개폐 금지</small>
+        </li>
+        <li>상온 조도 확보 여부 사진 촬영하여 공유</li>
+      </ul>
+
+      <!-- 현장 사진 첨부 -->
+      <div style="margin-top:10px; padding-top:10px; border-top:1.5px solid #E6F7F7;">
+        <div style="font-size:12px; font-weight:700; color:#0E7490; margin-bottom:8px;">📷 현장 사진 첨부</div>
+        <div style="display:flex; gap:8px;">
+          <div class="photo-slot" id="slot-a" style="flex:1;">
+            <input type="file" accept="image/*" capture="environment" onchange="showSlotPhoto(this,'slot-a')">
+            <button class="slot-delete" onclick="clearSlotPhoto(event,'slot-a')">✕</button>
+            <img alt="분전반">
+            <span style="font-size:10px; color:#aaa; pointer-events:none;">이미지 1<br>분전반</span>
+          </div>
+          <div class="photo-slot" id="slot-b" style="flex:1;">
+            <input type="file" accept="image/*" capture="environment" onchange="showSlotPhoto(this,'slot-b')">
+            <button class="slot-delete" onclick="clearSlotPhoto(event,'slot-b')">✕</button>
+            <img alt="상온 조도">
+            <span style="font-size:10px; color:#aaa; pointer-events:none;">이미지 2<br>상온 조도</span>
+          </div>
+          <div class="photo-slot" id="slot-c" style="flex:1;">
+            <input type="file" accept="image/*" capture="environment" onchange="showSlotPhoto(this,'slot-c')">
+            <button class="slot-delete" onclick="clearSlotPhoto(event,'slot-c')">✕</button>
+            <img alt="외부 정전범위">
+            <span style="font-size:10px; color:#aaa; pointer-events:none;">이미지 3<br>외부 정전범위</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="slack-toggle" onclick="toggleSlack(this)">
+        💬 슬랙 2차 보고 예시 <span class="s-chevron">›</span>
+      </div>
+      <div class="slack-box">
+        <div class="slack-channel">#wg-워크플레이스실_ppc_긴급상황대응방 (원문 스레드)</div>
+        <div class="slack-msg" id="s2">[○○○○PPC 정전현황 보고]
+● 00:00 부 정전 발생으로 워크플로우 제출
+● 관리소 방문 결과 (확인 체크리스트)
+　● 현재 000원인으로 건물 전체 정전 발생 / 원인 파악 중 / 원인 미상
+　● 0000 조치 중으로, nn분 소요 예상 / 0000 조치 예정, 업체 수배중
+　● 정전 해소 예정시까지 nn분소요
+　● 건물 비상 발전기 보유 O/X
+● 관리소 방문하였으나 관리소 부재입니다.
+　● 현재 비마트 입점층만 정전입니다.
+　● 현재 건물 입점층 전체 정전입니다. (입점층, 관리소 동일층 입점상가 방문)
+　● 현재 인근 타 건물들은 점등되어있습니다. / 인근 상가들도 정전입니다.
+　● 건물 외부로 이동하여, 인근 상가 점등여부 확인 및 사진촬영</div>
+        <button class="copy-btn" onclick="copySlack('s2',this)">📋 복사하기</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 10분 ── -->
+  <div class="time-card">
+    <div class="time-card-header open" onclick="toggle(this)">
+      <span class="time-badge badge-red">10분</span>
+      <span class="time-card-title">손전등 분배 · 라이더 서포트</span>
+      <span class="chevron">›</span>
+    </div>
+    <div class="time-card-body open">
+      <div class="card-what">
+        <div class="card-what-title">
+          <span class="card-what-emoji">🔦</span>
+          <span>비상손전등 확보 → 크루 분배</span>
+        </div>
+      </div>
+      <ul class="action-list">
+        <li>비상 손전등 확보 → 크루 분배</li>
+        <li>라이더 피킹 서포트 크루 1명 배치<small>PPC 입구 ~ 계단 정전 안내</small></li>
+        <li>(공간구현팀 요청 시) 분전함 차단기 OFF</li>
+        <li>입고 현황 보고</li>
+      </ul>
+
+      <div class="slack-toggle" onclick="toggleSlack(this)">
+        💬 입고·하역 지연 시 보고 양식 <span class="s-chevron">›</span>
+      </div>
+      <div class="slack-box">
+        <div class="slack-channel">#wg-워크플레이스실_ppc_긴급상황대응방</div>
+        <div class="slack-msg" id="s-cargo">[입고, 하역지연시 보고양식 - 상황 정리 후 보고]
+● 하역중 정전 발생으로, 상온/냉동/냉장 RT PPC 입고 하역 완료 및 워크인 보관, N대 차량 재상차 하였습니다.
+● 현재 PPC 내부 조도는 (햇빛이 비치어 내부 조도 확보 가능합니다 / 조명등 없이 조도확보가 어렵습니다)
+　● 내부 시야 확보 정도 사진 촬영하여 첨부</div>
+        <button class="copy-btn" onclick="copySlack('s-cargo',this)">📋 복사하기</button>
+      </div>
+
+      <div style="margin-top:10px; padding-top:10px; border-top:1.5px solid #E6F7F7;">
+        <div style="font-size:12px; font-weight:700; color:#0E7490; margin-bottom:8px;">🔌 분전함 차단기 OFF 순서 (공간구현팀 지시 시만)</div>
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <h5>컨트롤박스 전원스위치 OFF</h5>
+            <ul class="step-items"><li>화면 완전 소등 확인</li></ul>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <h5>커버 열어서 내부 차단기 OFF</h5>
+            <ul class="step-items"><li>OFF 상태 차단기 번호 기록</li></ul>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <h5>분전함 실내기 OFF → 실외기 OFF</h5>
+            <ul class="step-items"><li>순서 반드시 준수</li></ul>
+          </div>
+        </div>
+        <div class="warn">복전 시 역순: 실외기 → 실내기 → 차단기 → 컨트롤박스</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 20분 ── -->
+  <div class="time-card">
+    <div class="time-card-header open" onclick="toggle(this)">
+      <span class="time-badge badge-orange">20분</span>
+      <span class="time-card-title">전산망 확보 · 취소 주문 보관</span>
+      <span class="chevron">›</span>
+    </div>
+    <div class="time-card-body open">
+      <div class="card-what">
+        <div class="card-what-title">
+          <span class="card-what-emoji">💻</span>
+          <span>전산망 확보 (CS 노트북 VPN 연결)</span>
+        </div>
+      </div>
+      <ul class="action-list">
+        <li>전산망 확보 (CS 노트북 VPN 연결)</li>
+        <li>미출고·취소 주문건 온도별 구분 보관<small>2인 1조 / 바구니에 냉동·냉장 구분하여 내부 보관</small></li>
+        <li>입고·주문처리·지원 인력 검토 및 보고</li>
+      </ul>
+
+      <div style="margin-top:10px; padding-top:10px; border-top:1.5px solid #E6F7F7;">
+        <div style="font-size:12px; font-weight:700; color:#0E7490; margin-bottom:8px;">💻 VPN 연결 방법</div>
+
+        <!-- VPN 이미지 3칸 — 이미지 파일 경로를 src에 직접 입력하세요 -->
+        <div style="display:flex; gap:8px; margin-bottom:10px;">
+          <div style="flex:1; border:1.5px dashed #B2E8E6; border-radius:8px; min-height:70px; display:flex; align-items:center; justify-content:center; background:#F8FEFE; font-size:10px; color:#aaa; text-align:center; padding:6px;">
+            <!-- 이미지 삽입: <img src="vpn-step1.png" style="max-width:100%;border-radius:6px;"> -->
+            이미지 1<br>핫스팟 연결
+          </div>
+          <div style="flex:1; border:1.5px dashed #B2E8E6; border-radius:8px; min-height:70px; display:flex; align-items:center; justify-content:center; background:#F8FEFE; font-size:10px; color:#aaa; text-align:center; padding:6px;">
+            <!-- 이미지 삽입: <img src="vpn-step2.png" style="max-width:100%;border-radius:6px;"> -->
+            이미지 2<br>Global Protect
+          </div>
+          <div style="flex:1; border:1.5px dashed #B2E8E6; border-radius:8px; min-height:70px; display:flex; align-items:center; justify-content:center; background:#F8FEFE; font-size:10px; color:#aaa; text-align:center; padding:6px;">
+            <!-- 이미지 삽입: <img src="vpn-step3.png" style="max-width:100%;border-radius:6px;"> -->
+            이미지 3<br>인증번호 입력
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <h5>핫스팟 연결 후 Global Protect 앱 실행</h5>
+            <ul class="step-items"><li>작업표시줄에서 검색 — 없을 경우 윈도우 키 누른 후 검색</li></ul>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <h5>AD ID / PW 입력</h5>
+            <ul class="step-items"><li>관리자 부재 시 관리자 문의</li></ul>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <h5>문자·이메일로 발송되는 인증번호 입력</h5>
+          </div>
+        </div>
+      </div>
+
+      <div class="slack-toggle" onclick="toggleSlack(this)">
+        💬 슬랙 보고 양식 <span class="s-chevron">›</span>
+      </div>
+      <div class="slack-box">
+        <div class="slack-channel">#wg-워크플레이스실_ppc_긴급상황대응방</div>
+        <div class="slack-msg" id="s-20min">● 주문건 전체 취소 완료 및 취소 주문건 온도별 보관 완료하였습니다.</div>
+        <button class="copy-btn" onclick="copySlack('s-20min',this)">📋 복사하기</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 30분 ── -->
+  <div class="time-card">
+    <div class="time-card-header" onclick="toggle(this)">
+      <span class="time-badge badge-orange">30분</span>
+      <span class="time-card-title">온도 2차 체크 · PDA VPN 연결</span>
+      <span class="chevron">›</span>
+    </div>
+    <div class="time-card-body">
+      <ul class="action-list">
+        <li>슬라이드 냉동고 온도 체크 (박스 우선 측정)<small>바닥·외벽 측정 금지 / 관리자 직접 수행 권장</small></li>
+        <li>워크인 온도 체크 (20분 내 미수행 시)</li>
+        <li>아이스팩·드라이아이스 비치 / 냉동고 개방 최소화 안내</li>
+        <li>전체 취소 주문건 처리 완료 후 PDA VPN 연결 진행<small>복전 시 입고 진행 / CANCEL 원복 위함</small></li>
+        <li>중간보고: 온도 측정결과·특이사항</li>
+      </ul>
+      <div class="note">미복구 30분 시점 = 상품 선도 관리 본격 시작</div>
+    </div>
+  </div>
+
+  <!-- ── 복전 후 ── -->
+  <div class="time-card">
+    <div class="time-card-header" onclick="toggle(this)">
+      <span class="time-badge badge-green">✅ 복전 후</span>
+      <span class="time-card-title">분전반·네트워크함 점검 · 컨트롤러 재가동</span>
+      <span class="chevron">›</span>
+    </div>
+    <div class="time-card-body">
+      <div class="card-what">
+        <div class="card-what-title">
+          <span class="card-what-emoji">✅</span>
+          <span>분전반 확인 → 워크인 온도 체크 → 컨트롤러 재가동</span>
+        </div>
+      </div>
+      <ul class="action-list">
+        <li>전체 조명 점등 확인 / 분전반 차단기 모두 ON 확인</li>
+        <li>워크인 쿨러 팬 작동 확인</li>
+        <li>컨트롤러 1개씩 30분 간격 재가동<small>냉장(좌측) → 냉동(우측) 순서 / 동시 ON 금지 (재트립 위험)</small></li>
+        <li>온도 정상화 확인 (냉동 -18°C · 냉장 5°C 목표)</li>
+        <li>레벨 검품 진행 (커머스품질관리팀 확인)</li>
+        <li>CANCEL 존 확인 (CS 주문처리 진행 시)</li>
+        <li>네트워크 원복 확인 후 보고<small>복전 후 15~20분 소요 → 확인 후 재보고</small></li>
+      </ul>
+
+      <!-- 분전반 점검 -->
+      <div style="margin-top:10px; padding-top:10px; border-top:1.5px solid #E6F7F7;">
+        <div style="font-size:12px; font-weight:700; color:#0E7490; margin-bottom:8px;">🔌 분전반 점검</div>
+        <div style="display:flex; gap:8px;">
+          <div class="photo-slot" id="slot-elec-a" style="flex:1;">
+            <input type="file" accept="image/*" capture="environment" onchange="showSlotPhoto(this,'slot-elec-a')">
+            <button class="slot-delete" onclick="clearSlotPhoto(event,'slot-elec-a')">✕</button>
+            <img alt="차단기 상태">
+            <span style="font-size:10px; color:#aaa; pointer-events:none;">이미지 1<br>차단기 상태</span>
+          </div>
+          <div class="photo-slot" id="slot-elec-b" style="flex:1;">
+            <input type="file" accept="image/*" capture="environment" onchange="showSlotPhoto(this,'slot-elec-b')">
+            <button class="slot-delete" onclick="clearSlotPhoto(event,'slot-elec-b')">✕</button>
+            <img alt="조명 점등">
+            <span style="font-size:10px; color:#aaa; pointer-events:none;">이미지 2<br>조명 점등</span>
+          </div>
+          <div class="photo-slot" id="slot-elec-c" style="flex:1;">
+            <input type="file" accept="image/*" capture="environment" onchange="showSlotPhoto(this,'slot-elec-c')">
+            <button class="slot-delete" onclick="clearSlotPhoto(event,'slot-elec-c')">✕</button>
+            <img alt="분전반 전체">
+            <span style="font-size:10px; color:#aaa; pointer-events:none;">이미지 3<br>분전반 전체</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 네트워크함 점검 -->
+      <div style="margin-top:10px; padding-top:10px; border-top:1.5px solid #E6F7F7;">
+        <div style="font-size:12px; font-weight:700; color:#0E7490; margin-bottom:8px;">🌐 네트워크함 점검</div>
+        <div style="display:flex; gap:8px;">
+          <div class="photo-slot" id="slot-net-a" style="flex:1;">
+            <input type="file" accept="image/*" capture="environment" onchange="showSlotPhoto(this,'slot-net-a')">
+            <button class="slot-delete" onclick="clearSlotPhoto(event,'slot-net-a')">✕</button>
+            <img alt="LED 상태">
+            <span style="font-size:10px; color:#aaa; pointer-events:none;">이미지 1<br>LED 상태</span>
+          </div>
+          <div class="photo-slot" id="slot-net-b" style="flex:1;">
+            <input type="file" accept="image/*" capture="environment" onchange="showSlotPhoto(this,'slot-net-b')">
+            <button class="slot-delete" onclick="clearSlotPhoto(event,'slot-net-b')">✕</button>
+            <img alt="공유기·ONU">
+            <span style="font-size:10px; color:#aaa; pointer-events:none;">이미지 2<br>공유기·ONU</span>
+          </div>
+          <div class="photo-slot" id="slot-net-c" style="flex:1;">
+            <input type="file" accept="image/*" capture="environment" onchange="showSlotPhoto(this,'slot-net-c')">
+            <button class="slot-delete" onclick="clearSlotPhoto(event,'slot-net-c')">✕</button>
+            <img alt="네트워크함 전체">
+            <span style="font-size:10px; color:#aaa; pointer-events:none;">이미지 3<br>네트워크함 전체</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 컨트롤러 재가동 -->
+      <div style="margin-top:10px; padding-top:10px; border-top:1.5px solid #E6F7F7;">
+        <div style="font-size:12px; font-weight:700; color:#0E7490; margin-bottom:8px;">❄️ 컨트롤러 재가동</div>
+        <div style="display:flex; gap:8px;">
+          <div class="photo-slot" id="slot-ctrl-a" style="flex:1;">
+            <input type="file" accept="image/*" capture="environment" onchange="showSlotPhoto(this,'slot-ctrl-a')">
+            <button class="slot-delete" onclick="clearSlotPhoto(event,'slot-ctrl-a')">✕</button>
+            <img alt="냉장 컨트롤러">
+            <span style="font-size:10px; color:#aaa; pointer-events:none;">이미지 1<br>냉장 컨트롤러</span>
+          </div>
+          <div class="photo-slot" id="slot-ctrl-b" style="flex:1;">
+            <input type="file" accept="image/*" capture="environment" onchange="showSlotPhoto(this,'slot-ctrl-b')">
+            <button class="slot-delete" onclick="clearSlotPhoto(event,'slot-ctrl-b')">✕</button>
+            <img alt="냉동 컨트롤러">
+            <span style="font-size:10px; color:#aaa; pointer-events:none;">이미지 2<br>냉동 컨트롤러</span>
+          </div>
+          <div class="photo-slot" id="slot-ctrl-c" style="flex:1;">
+            <input type="file" accept="image/*" capture="environment" onchange="showSlotPhoto(this,'slot-ctrl-c')">
+            <button class="slot-delete" onclick="clearSlotPhoto(event,'slot-ctrl-c')">✕</button>
+            <img alt="온도 확인">
+            <span style="font-size:10px; color:#aaa; pointer-events:none;">이미지 3<br>온도 확인</span>
+          </div>
+        </div>
+        <div class="warn" style="margin-top:8px;">⚠️ 컨트롤러는 반드시 1개씩 30분 간격 재가동 — 동시 ON 금지 (재트립 위험)</div>
+      </div>
+
+      <div class="slack-toggle" onclick="toggleSlack(this)" style="margin-top:10px;">
+        💬 슬랙 복전 보고 예시 <span class="s-chevron">›</span>
+      </div>
+      <div class="slack-box">
+        <div class="slack-channel">#wg-워크플레이스실_ppc_긴급상황대응방</div>
+        <div class="slack-msg" id="s-restore">○○시 ○○분 부 전력 복구 완료되었습니다.
+정전 사후조치 체크 진행 후 보고드리겠습니다.
+
+✅ 냉장/냉동 워크인 쿨러 팬 정상 작동 확인
+✅ 워크인/슬라이드 냉동고 온도 체크 완료
+✅ 분전반 차단기 ON 확인 완료
+✅ 냉장/냉동 온도 정상 (냉동 -18도 이하, 냉장 5도 이하)
+✅ 기타 특이사항 : 없음
+
+→ 네트워크 복구 확인 후 재보고 드리겠습니다.</div>
+        <button class="copy-btn" onclick="copySlack('s-restore',this)">📋 복사하기</button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /view-ppc -->
+
+
+<!-- =====================================================
+     탭 2 : 정전대응 타임라인
+====================================================== -->
+<style>
+/* ── 타임라인 표 ── */
+.tl-table-wrap {
+  overflow-x: auto; -webkit-overflow-scrolling: touch;
+  padding: 0 0 8px;
+}
+.tl-table {
+  border-collapse: collapse;
+  min-width: 900px; width: 100%;
+  font-size: 12px;
+}
+.tl-table th, .tl-table td {
+  border: 1px solid #D1F0EF;
+  padding: 7px 9px;
+  vertical-align: top;
+  line-height: 1.55;
+}
+/* 헤더 행 */
+.tl-table thead th {
+  background: #2AC1BC; color: #fff;
+  font-size: 11px; font-weight: 800;
+  text-align: center; white-space: nowrap;
+}
+/* 시간 열 */
+.tl-table .col-time {
+  background: #F0FAFA; font-weight: 800;
+  font-size: 11px; text-align: center;
+  white-space: nowrap; color: #0E7490;
+  min-width: 68px;
+}
+/* Phase 열 */
+.tl-table .col-phase {
+  background: #F0FAFA; font-size: 10px;
+  font-weight: 700; text-align: center;
+  color: #6B7280; min-width: 52px;
+}
+/* 부서 셀 기본 */
+.tl-table .col-ppc  { background: #F0FEFA; min-width: 170px; }
+.tl-table .col-gm   { background: #EFF6FF; min-width: 150px; }
+.tl-table .col-space{ background: #F5F3FF; min-width: 140px; }
+.tl-table .col-it   { background: #F9FAFB; min-width: 120px; }
+.tl-table .col-qa   { background: #FFFBEB; min-width: 140px; }
+.tl-table .col-note { background: #FFF; min-width: 130px; color:#555; font-size:11px; }
+
+/* 빈 셀 */
+.tl-table .empty { color: #ccc; text-align: center; font-size: 13px; }
+
+/* 복구 분기 행 */
+.tl-table .row-recovery .col-time {
+  background: #D1FAE5; color: #065F46;
+}
+.tl-table .row-recovery td {
+  background: #F0FDF4;
+}
+
+/* Phase 구분 헤더 */
+.tl-table .phase-header td {
+  background: #2AC1BC; color: #fff;
+  font-weight: 800; font-size: 12px;
+  padding: 6px 10px; text-align: center;
+}
+
+/* 담당자 행 */
+.tl-table .row-contact .col-time { color: #9CA3AF; }
+.tl-table .row-contact td { background: #F9FAFB; color: #6B7280; font-size: 11px; }
+
+/* 아이템 목록 */
+.tl-cell-list { list-style: none; padding: 0; margin: 0; }
+.tl-cell-list li { padding: 2px 0 2px 10px; position: relative; }
+.tl-cell-list li::before { content: '①'; position: absolute; left: 0; color: #2AC1BC; font-size: 10px; }
+.tl-cell-list li:nth-child(2)::before { content: '②'; }
+.tl-cell-list li:nth-child(3)::before { content: '③'; }
+.tl-cell-list li:nth-child(4)::before { content: '④'; }
+.tl-cell-list li:nth-child(5)::before { content: '⑤'; }
+.tl-cell-list li:nth-child(6)::before { content: '⑥'; }
+.tl-cell-list li:nth-child(7)::before { content: '⑦'; }
+.tl-cell-list li:nth-child(8)::before { content: '⑧'; }
+
+.tl-note-chip {
+  display: inline-block; background: #FEF3C7; border: 1px solid #FCD34D;
+  border-radius: 4px; padding: 1px 5px; font-size: 10px; color: #92400E;
+  margin-top: 3px;
+}
+.tl-key {
+  display: inline-block; background: #EFF6FF; border: 1px solid #BFDBFE;
+  border-radius: 4px; padding: 1px 5px; font-size: 10px; color: #1E40AF;
+  margin-top: 3px; font-weight: 700;
+}
+</style>
+
+<div class="main-view" id="view-timeline">
+
+
+  <!-- 플로우차트 HTML 재현 -->
+  <div style="margin:12px 14px 0;">
+    <div style="font-size:12px; font-weight:700; color:#2AC1BC; margin-bottom:6px;">📊 정전대응 플로우차트</div>
+  </div>
+
+  <!-- 상단 역할별 타임라인 바 -->
+  <div style="overflow-x:auto; -webkit-overflow-scrolling:touch; padding:0 14px 0;">
+  <div style="min-width:860px; background:#fff; border:1.5px solid #D1F0EF; border-radius:10px; overflow:hidden; margin-bottom:10px;">
+
+    <!-- 시간축 헤더 -->
+    <div style="display:grid; grid-template-columns:80px repeat(7,1fr); background:#2AC1BC; color:#fff; font-size:10px; font-weight:800; text-align:center;">
+      <div style="padding:6px 4px; border-right:1px solid rgba(255,255,255,.3);">역할</div>
+      <div style="padding:6px 4px; border-right:1px solid rgba(255,255,255,.3);">즉시</div>
+      <div style="padding:6px 4px; border-right:1px solid rgba(255,255,255,.3);">~5분</div>
+      <div style="padding:6px 4px; border-right:1px solid rgba(255,255,255,.3);">~10분</div>
+      <div style="padding:6px 4px; border-right:1px solid rgba(255,255,255,.3);">~15분</div>
+      <div style="padding:6px 4px; border-right:1px solid rgba(255,255,255,.3);">~20분</div>
+      <div style="padding:6px 4px; border-right:1px solid rgba(255,255,255,.3);">~30분</div>
+      <div style="padding:6px 4px;">복전 후</div>
+    </div>
+
+    <!-- B운실 리더 행 -->
+    <div style="display:grid; grid-template-columns:80px repeat(7,1fr); border-bottom:1px solid #E0F5F5; font-size:10px; align-items:center;">
+      <div style="padding:8px 6px; font-weight:800; color:#0E7490; background:#F0FAFA; border-right:1px solid #D1F0EF; font-size:10px;">📋 B운실<br>리더</div>
+      <div style="padding:6px 4px; border-right:1px solid #E0F5F5; color:#555;"></div>
+      <div style="padding:6px 4px; border-right:1px solid #E0F5F5;">
+        <div style="background:#EF4444; color:#fff; border-radius:4px; padding:3px 5px; font-size:10px; font-weight:700; text-align:center;">주문차단</div>
+      </div>
+      <div style="padding:6px 4px; border-right:1px solid #E0F5F5; color:#555; font-size:10px;">OPS 채널 보고</div>
+      <div style="padding:6px 4px; border-right:1px solid #E0F5F5; display:flex; flex-direction:column; gap:3px;">
+        <div style="background:#EC4899; color:#fff; border-radius:4px; padding:3px 5px; font-size:10px; font-weight:700; text-align:center;">주문취소 진행</div>
+        <div style="font-size:10px; color:#555;">OP 채널 보고</div>
+      </div>
+      <div style="padding:6px 4px; border-right:1px solid #E0F5F5; color:#555; font-size:10px;"></div>
+      <div style="padding:6px 4px; border-right:1px solid #E0F5F5; color:#555; font-size:10px;"></div>
+      <div style="padding:6px 4px; color:#555; font-size:10px;"></div>
+    </div>
+
+    <!-- 공간구현팀 행 -->
+    <div style="display:grid; grid-template-columns:80px repeat(7,1fr); border-bottom:1px solid #E0F5F5; font-size:10px; align-items:center;">
+      <div style="padding:8px 6px; font-weight:800; color:#7C3AED; background:#F5F3FF; border-right:1px solid #D1F0EF; font-size:10px;">🔧 공간<br>구현팀</div>
+      <div style="padding:6px 4px; border-right:1px solid #E0F5F5;"></div>
+      <div style="padding:6px 4px; border-right:1px solid #E0F5F5;"></div>
+      <div style="padding:6px 4px; border-right:1px solid #E0F5F5; color:#555; font-size:10px;">한전 연락<br><span style="font-size:9px; color:#888;">(PPC 관리소 확인 후 제한시)</span></div>
+      <div style="padding:6px 4px; border-right:1px solid #E0F5F5; color:#555; font-size:10px;">정전 사유에 따른<br>조치안 강구<br>차단기 OFF 지시</div>
+      <div style="padding:6px 4px; border-right:1px solid #E0F5F5; color:#555; font-size:10px;">설비관련이슈:<br>업체수배</div>
+      <div style="padding:6px 4px; border-right:1px solid #E0F5F5;"></div>
+      <div style="padding:6px 4px;"></div>
+    </div>
+
+    <!-- 품질관리팀 행 -->
+    <div style="display:grid; grid-template-columns:80px repeat(7,1fr); font-size:10px; align-items:center;">
+      <div style="padding:8px 6px; font-weight:800; color:#D97706; background:#FFFBEB; border-right:1px solid #D1F0EF; font-size:10px;">📦 품질<br>관리팀</div>
+      <div style="padding:6px 4px; border-right:1px solid #E0F5F5;"></div>
+      <div style="padding:6px 4px; border-right:1px solid #E0F5F5;"></div>
+      <div style="padding:6px 4px; border-right:1px solid #E0F5F5; color:#555; font-size:10px;">워크인 온도에 따른<br>온도 검품 기준 수립</div>
+      <div style="padding:6px 4px; border-right:1px solid #E0F5F5;"></div>
+      <div style="padding:6px 4px; border-right:1px solid #E0F5F5;"></div>
+      <div style="padding:6px 4px; border-right:1px solid #E0F5F5;"></div>
+      <div style="padding:6px 4px;"></div>
+    </div>
+  </div>
+  </div>
+
+  <!-- PPC 플로우차트 -->
+  <div style="overflow-x:auto; -webkit-overflow-scrolling:touch; padding:0 14px 12px;">
+  <div style="min-width:860px; background:#fff; border:1.5px solid #D1F0EF; border-radius:10px; padding:16px 14px;">
+    <div style="font-size:11px; font-weight:800; color:#0E7490; margin-bottom:12px;">🏭 PPC 대응 플로우</div>
+
+    <!-- SVG 플로우차트 -->
+    <svg viewBox="0 0 840 360" xmlns="http://www.w3.org/2000/svg" style="width:100%; font-family:-apple-system,sans-serif;">
+      <defs>
+        <marker id="arr" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+          <polygon points="0 0,8 3,0 6" fill="#2AC1BC"/>
+        </marker>
+        <marker id="arrg" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+          <polygon points="0 0,8 3,0 6" fill="#6B7280"/>
+        </marker>
+      </defs>
+
+      <!-- ── 박스 스타일 정의용 rect/text 반복 ── -->
+
+      <!-- 정전발생 -->
+      <rect x="2" y="155" width="72" height="36" rx="6" fill="#EF4444" stroke="none"/>
+      <text x="38" y="170" text-anchor="middle" fill="#fff" font-size="10" font-weight="800">⚡ 정전</text>
+      <text x="38" y="183" text-anchor="middle" fill="#fff" font-size="10" font-weight="800">발생</text>
+
+      <!-- 화살표: 정전발생 → 패킹대집결 -->
+      <line x1="74" y1="173" x2="96" y2="173" stroke="#2AC1BC" stroke-width="1.5" marker-end="url(#arr)"/>
+
+      <!-- 패킹대 집결·상황보고 -->
+      <rect x="97" y="148" width="78" height="50" rx="6" fill="#F0FAFA" stroke="#2AC1BC" stroke-width="1.5"/>
+      <text x="136" y="163" text-anchor="middle" fill="#0E7490" font-size="9" font-weight="700">패킹대집결</text>
+      <text x="136" y="175" text-anchor="middle" fill="#0E7490" font-size="9">상황보고</text>
+      <text x="136" y="188" text-anchor="middle" fill="#6B7280" font-size="9">(집결간 복전?)</text>
+
+      <!-- 화살표: 집결 → 분기 -->
+      <line x1="175" y1="173" x2="197" y2="173" stroke="#2AC1BC" stroke-width="1.5" marker-end="url(#arr)"/>
+
+      <!-- 분기 다이아몬드 -->
+      <polygon points="210,158 225,173 210,188 195,173" fill="#FFF9C4" stroke="#F4B400" stroke-width="1.5"/>
+
+      <!-- N 위로 (장기성) -->
+      <line x1="210" y1="158" x2="210" y2="138" stroke="#6B7280" stroke-width="1.5" marker-end="url(#arrg)"/>
+      <text x="214" y="150" fill="#6B7280" font-size="9">N</text>
+      <text x="196" y="134" fill="#6B7280" font-size="9" font-weight="700">장기성</text>
+
+      <!-- Y 아래로 (단기성) -->
+      <line x1="210" y1="188" x2="210" y2="208" stroke="#6B7280" stroke-width="1.5" marker-end="url(#arrg)"/>
+      <text x="214" y="202" fill="#6B7280" font-size="9">Y</text>
+      <text x="196" y="224" fill="#6B7280" font-size="9" font-weight="700">단기성</text>
+
+      <!-- 화살표: 분기 → 원인파악 -->
+      <line x1="225" y1="173" x2="247" y2="173" stroke="#2AC1BC" stroke-width="1.5" marker-end="url(#arr)"/>
+
+      <!-- 원인파악 -->
+      <text x="260" y="162" text-anchor="middle" fill="#555" font-size="9">원인 파악</text>
+      <line x1="252" y1="155" x2="252" y2="143" stroke="#aaa" stroke-width="1"/>
+      <line x1="252" y1="143" x2="268" y2="143" stroke="#aaa" stroke-width="1"/>
+      <text x="270" y="147" fill="#555" font-size="8.5">1차. 관리소</text>
+      <line x1="252" y1="155" x2="252" y2="167" stroke="#aaa" stroke-width="1"/>
+      <line x1="252" y1="167" x2="268" y2="167" stroke="#aaa" stroke-width="1"/>
+      <text x="270" y="171" fill="#555" font-size="8.5">2차. 한전</text>
+
+      <!-- 화살표: 원인파악 → 복구여부 분기 -->
+      <line x1="310" y1="155" x2="335" y2="155" stroke="#2AC1BC" stroke-width="1.5" marker-end="url(#arr)"/>
+
+      <!-- 장기성 상단 분기 박스들 -->
+      <!-- n시간 내 복전예상 -->
+      <rect x="336" y="102" width="90" height="30" rx="5" fill="#F0FAFA" stroke="#2AC1BC" stroke-width="1.2"/>
+      <text x="381" y="119" text-anchor="middle" fill="#0E7490" font-size="9">n시간 내 복전예상</text>
+
+      <!-- 원인파악 불가/장기화 -->
+      <rect x="336" y="148" width="90" height="30" rx="5" fill="#FEF3C7" stroke="#F59E0B" stroke-width="1.2"/>
+      <text x="381" y="162" text-anchor="middle" fill="#92400E" font-size="9">원인파악 불가</text>
+      <text x="381" y="173" text-anchor="middle" fill="#92400E" font-size="9">또는 장기화</text>
+
+      <!-- 세로 연결선 -->
+      <line x1="336" y1="117" x2="336" y2="163" stroke="#aaa" stroke-width="1" stroke-dasharray="3,2"/>
+
+      <!-- 온도이탈 / 온도정상 분기 (장기성에서) -->
+      <line x1="210" y1="138" x2="280" y2="138" stroke="#6B7280" stroke-width="1.5"/>
+      <line x1="280" y1="138" x2="280" y2="248" stroke="#6B7280" stroke-width="1.5"/>
+
+      <!-- 피킹상품 지온보관 -->
+      <rect x="258" y="252" width="80" height="46" rx="5" fill="#FCE7F3" stroke="#EC4899" stroke-width="1.5"/>
+      <text x="298" y="268" text-anchor="middle" fill="#9D174D" font-size="9" font-weight="700">피킹상품 지온보관</text>
+      <text x="298" y="280" text-anchor="middle" fill="#9D174D" font-size="9">(2인 1조)</text>
+      <text x="298" y="291" text-anchor="middle" fill="#9D174D" font-size="9">1차 온도측정</text>
+
+      <line x1="280" y1="248" x2="280" y2="275" stroke="#6B7280" stroke-width="1.5" marker-end="url(#arrg)"/>
+
+      <!-- 온도이탈 라벨 -->
+      <text x="335" y="267" fill="#EF4444" font-size="9" font-weight="700">온도이탈</text>
+      <line x1="338" y1="260" x2="338" y2="275" stroke="#EF4444" stroke-width="1"/>
+      <line x1="338" y1="275" x2="430" y2="275" stroke="#EF4444" stroke-width="1.5" marker-end="url(#arr)"/>
+
+      <!-- 온도정상 라벨 -->
+      <text x="335" y="300" fill="#2AC1BC" font-size="9" font-weight="700">온도정상</text>
+      <line x1="338" y1="293" x2="338" y2="308" stroke="#2AC1BC" stroke-width="1"/>
+      <line x1="338" y1="308" x2="430" y2="308" stroke="#2AC1BC" stroke-width="1.5" marker-end="url(#arr)"/>
+
+      <!-- 발생+3시간 내 차량도착 소통 -->
+      <rect x="431" y="245" width="90" height="38" rx="5" fill="#FEF3C7" stroke="#F59E0B" stroke-width="1.5"/>
+      <text x="476" y="260" text-anchor="middle" fill="#92400E" font-size="9" font-weight="700">발생 +3시간 내</text>
+      <text x="476" y="272" text-anchor="middle" fill="#92400E" font-size="9">차량도착 소통</text>
+      <text x="476" y="283" text-anchor="middle" fill="#92400E" font-size="8">(GM)</text>
+
+      <!-- 주간/야간 라벨 -->
+      <rect x="540" y="255" width="80" height="22" rx="4" fill="#EC4899" stroke="none"/>
+      <text x="580" y="269" text-anchor="middle" fill="#fff" font-size="9" font-weight="700">주간·영업시간 / 야간·미마팀</text>
+
+      <!-- 복전시까지 개폐 금지 -->
+      <rect x="431" y="295" width="90" height="30" rx="5" fill="#E6F7F7" stroke="#2AC1BC" stroke-width="1.5"/>
+      <text x="476" y="309" text-anchor="middle" fill="#0E7490" font-size="9">복전시까지 개폐 금지</text>
+      <text x="476" y="320" text-anchor="middle" fill="#0E7490" font-size="8">(1시간 단위 측정)</text>
+
+      <!-- 단기성 하단 플로우 -->
+      <!-- 내부망 작동확인 -->
+      <rect x="247" y="212" width="70" height="26" rx="5" fill="#F0FAFA" stroke="#2AC1BC" stroke-width="1.2"/>
+      <text x="282" y="225" text-anchor="middle" fill="#0E7490" font-size="9">내부망 작동</text>
+      <text x="282" y="234" text-anchor="middle" fill="#0E7490" font-size="9">확인</text>
+
+      <line x1="225" y1="200" x2="247" y2="225" stroke="#6B7280" stroke-width="1.5" marker-end="url(#arrg)"/>
+
+      <!-- Y/N 분기 -->
+      <line x1="317" y1="225" x2="340" y2="225" stroke="#2AC1BC" stroke-width="1.5"/>
+      <text x="325" y="222" fill="#2AC1BC" font-size="9">Y</text>
+
+      <!-- 주문수행 박스 -->
+      <rect x="341" y="207" width="84" height="34" rx="5" fill="#E6F7F7" stroke="#2AC1BC" stroke-width="1.2"/>
+      <text x="383" y="220" text-anchor="middle" fill="#0E7490" font-size="9">주문수행</text>
+      <text x="383" y="231" text-anchor="middle" fill="#0E7490" font-size="9">컨트롤러 30분 단위</text>
+      <text x="383" y="241" text-anchor="middle" fill="#0E7490" font-size="8">재가동</text>
+
+      <!-- N → 핫스팟+VPN -->
+      <line x1="282" y1="238" x2="282" y2="258" stroke="#6B7280" stroke-width="1.5"/>
+      <text x="286" y="252" fill="#6B7280" font-size="9">N</text>
+      <line x1="282" y1="258" x2="341" y2="258" stroke="#6B7280" stroke-width="1.5" marker-end="url(#arrg)"/>
+
+      <!-- 핫스팟+VPN 박스 -->
+      <rect x="341" y="244" width="84" height="34" rx="5" fill="#F0FAFA" stroke="#6B7280" stroke-width="1.2"/>
+      <text x="383" y="257" text-anchor="middle" fill="#555" font-size="9">핫스팟+VPN</text>
+      <text x="383" y="268" text-anchor="middle" fill="#555" font-size="9">주문수행</text>
+      <text x="383" y="278" text-anchor="middle" fill="#555" font-size="8">컨트롤러 30분 재가동</text>
+
+      <!-- ~15분 이후 우측 박스들 -->
+      <!-- 비상손전등·라이더 서포트 등 -->
+      <rect x="530" y="132" width="100" height="60" rx="5" fill="#F0FAFA" stroke="#2AC1BC" stroke-width="1.2"/>
+      <text x="580" y="149" text-anchor="middle" fill="#0E7490" font-size="9" font-weight="700">비상 손전등 확보</text>
+      <text x="580" y="161" text-anchor="middle" fill="#0E7490" font-size="9">라이더 피킹 서포트</text>
+      <text x="580" y="173" text-anchor="middle" fill="#0E7490" font-size="9">입고현황 보고</text>
+      <text x="580" y="183" text-anchor="middle" fill="#555" font-size="8">(상온/조도확보) 입고수행</text>
+
+      <!-- 화살표 연결 -->
+      <line x1="476" y1="117" x2="530" y2="155" stroke="#2AC1BC" stroke-width="1.2" marker-end="url(#arr)"/>
+
+      <!-- 전산망 확보(CS) 박스 — 핑크 강조 -->
+      <rect x="638" y="132" width="100" height="60" rx="5" fill="#EC4899" stroke="none"/>
+      <text x="688" y="149" text-anchor="middle" fill="#fff" font-size="9" font-weight="800">전산망 확보(CS)</text>
+      <text x="688" y="161" text-anchor="middle" fill="#fff" font-size="9">미출고 주문건</text>
+      <text x="688" y="173" text-anchor="middle" fill="#fff" font-size="9">구분 보관</text>
+      <text x="688" y="183" text-anchor="middle" fill="#fff" font-size="8">복전대비 인력계획</text>
+      <text x="688" y="193" text-anchor="middle" fill="#fff" font-size="8">(입고, 지원)</text>
+      <text x="688" y="207" text-anchor="middle" fill="#fff" font-size="8">↑ 온도 측정 X</text>
+
+      <line x1="630" y1="162" x2="638" y2="162" stroke="#2AC1BC" stroke-width="1.5" marker-end="url(#arr)"/>
+
+      <!-- 크루 PDA 배분 -->
+      <rect x="746" y="140" width="90" height="46" rx="5" fill="#F0FAFA" stroke="#2AC1BC" stroke-width="1.2"/>
+      <text x="791" y="156" text-anchor="middle" fill="#0E7490" font-size="9" font-weight="700">크루 PDA 배분</text>
+      <text x="791" y="168" text-anchor="middle" fill="#0E7490" font-size="9">전체 VPN 연결</text>
+      <text x="791" y="180" text-anchor="middle" fill="#0E7490" font-size="9">진행 (복전대비)</text>
+
+      <line x1="738" y1="162" x2="746" y2="162" stroke="#2AC1BC" stroke-width="1.5" marker-end="url(#arr)"/>
+
+      <!-- 복전 프로세스 최종 박스 -->
+      <rect x="746" y="195" width="90" height="26" rx="5" fill="#2AC1BC" stroke="none"/>
+      <text x="791" y="211" text-anchor="middle" fill="#fff" font-size="9" font-weight="800">✅ 복전 프로세스</text>
+
+      <!-- 복전 연결선 -->
+      <line x1="791" y1="186" x2="791" y2="195" stroke="#2AC1BC" stroke-width="1.5" marker-end="url(#arr)"/>
+
+      <!-- 네트워크 정상화 / 30분단위 체크 -->
+      <line x1="836" y1="208" x2="820" y2="208" stroke="#2AC1BC" stroke-width="1"/>
+      <text x="838" y="208" fill="#0E7490" font-size="8">네트워크 정상화 확인</text>
+      <text x="838" y="220" fill="#0E7490" font-size="8">30분단위 워크인 온도 체크</text>
+    </svg>
+  </div>
+  </div>
+
+  <div class="temp-bar" style="margin-bottom:0;">
+    <span style="font-size:16px">📋</span>
+    <span><strong>정전대응 타임라인 (작업용)</strong> — 시간별 부서 행동 (좌우 스크롤 가능)</span>
+  </div>
+
+  <div class="tl-table-wrap">
+  <table class="tl-table">
+    <thead>
+      <tr>
+        <th class="col-time">시간</th>
+        <th class="col-phase">Phase</th>
+        <th class="col-ppc">🏭 PPC<br>관리자·(선임급)크루</th>
+        <th class="col-gm">📋 GM / 팀장<br>(B마트운영실)</th>
+        <th class="col-space">🔧 공간구현팀</th>
+        <th class="col-qa">📦 커머스<br>품질관리팀</th>
+        <th class="col-it">💻 총무팀<br>(IT·네트워크)</th>
+        <th class="col-note">비고</th>
+      </tr>
+    </thead>
+    <tbody>
+
+      <!-- ══ Phase 1: 사전 보고 (즉시 ~ 5분) ══ -->
+      <tr class="phase-header"><td colspan="8">🔴 PHASE 1 — 사전 보고 (즉시 ~ 5분 / 분전반 확인 완료)</td></tr>
+
+      <!-- 즉시 -->
+      <tr>
+        <td class="col-time">즉시</td>
+        <td class="col-phase">Phase 1</td>
+        <td class="col-ppc">
+          <ul class="tl-cell-list">
+            <li>구성원 전체 작업중단 및 패킹대 앞 집결 / 육성지시<br><small>→ 전원 집결여부 파악 후 보고 / 패킹대 외 장소 집결 필요시 관리자 판단 하 집결지 지정</small></li>
+            <li>인력 집결간 1차보고. 슬랙 긴급채널 즉시 공유<br><small>wg-워크플레이스실_ppc_긴급상황대응방 @ㅇㅇㅇㅇPPC_관리자 자동태그</small></li>
+            <li>슬랙보고 후 GM 유선 보고 / 부재시 팀장 유선 보고<br><small>※ 관리자 부재시 비상연락망 확인하여 권역 GM (부재시 팀장) 유선 보고</small></li>
+          </ul>
+        </td>
+        <td class="col-gm">정전 대응 가이드 전달(GM)</td>
+        <td class="col-space">상황 인지</td>
+        <td class="col-qa">상황 인지</td>
+        <td class="col-it">상황 인지</td>
+        <td class="col-note">협의필요사항<br>1. 주문차단 의사결정 기준<br>2. OPS 채널 공유 주체 및 태그대상<br>3. CS 담당자<br>4. 주문 취소 처리 기준<br>5. 사후검품 진행 기준<br>6. 긴급발전차량 업체 확인 시점<br>7. 시나리오 검토 (120분 이상 등)</td>
+      </tr>
+
+      <!-- ~5분 -->
+      <tr>
+        <td class="col-time">~5분</td>
+        <td class="col-phase">Phase 1</td>
+        <td class="col-ppc">
+          <ul class="tl-cell-list">
+            <li>슬랙채널 2차보고 (원인, 복구시점, 정전범위, 분전반)
+              <br><small>1) 관리소 방문 — 정전 원인·복전시점·비상발전기 보유여부 확인</small>
+              <br><small>관리소 부재시: 정전범위 사진촬영 (B마트 전유부 층 / 건물 / 지역일대)</small>
+              <br><small>2) 상온 조도 확보여부</small>
+              <br><small>3) 분전반 사진 촬영 후 공유 (스파크·탄내 여부)</small>
+            </li>
+            <li>피킹중 바구니 온도구분하여 보관 / 주문취소</li>
+          </ul>
+          <div class="tl-note-chip">[보고양식] 슬랙 2차 보고 예시 참고 (PPC탭)</div>
+        </td>
+        <td class="col-gm">
+          <ul class="tl-cell-list">
+            <li>GM → 팀장 유선보고</li>
+            <li>(운영팀장) 긴급채널 ✔️ 이모지 점검 / 미답변자 유선 연락</li>
+            <li>정전 1분 초과 유지시: (GM) 주문차단 선조치 수행 → 팀장·실장 태그 보고</li>
+            <li>(GM) b마트-ops 채널 공유<br><small>(우형)물류기획실장·사업실장 / (우청)운영실장·커머스운영지원실장·워크플레이스실장 태그</small></li>
+            <li>(팀장) 냉동탑차 필요대수 산정 및 요청: NN분 이상 정전 유지시</li>
+          </ul>
+          <div class="tl-note-chip">[보고양식] b마트-ops 채널 보고 예시 참고 (PPC탭)</div>
+        </td>
+        <td class="col-space">
+          <ul class="tl-cell-list">
+            <li>(관리소 부재시) 관리소·한전 유선연락 (PPC 상황파악 동시수행)<br><small>1. 정전 원인 / 2. 정전 범위 / 3. 예상 복구시점</small></li>
+            <li>(한전 답변에 따라 N분 이상 미해소시) 냉동탑차 수배 요청</li>
+          </ul>
+        </td>
+        <td class="col-qa">상황 인지</td>
+        <td class="col-it">상황 인지</td>
+        <td class="col-note"><span class="empty">—</span></td>
+      </tr>
+
+      <!-- ══ Phase 2: 대응 (10분 ~ 복전시) ══ -->
+      <tr class="phase-header"><td colspan="8">🟠 PHASE 2 — 대응 (~10분 ~ 복전 전)</td></tr>
+
+      <!-- ~10분 -->
+      <tr>
+        <td class="col-time">~10분</td>
+        <td class="col-phase">Phase 2</td>
+        <td class="col-ppc">
+          <ul class="tl-cell-list">
+            <li>PPC 비상손전등 확보, 크루 분배<br>→ 라이더 픽업대 서포트 크루 1명 비치</li>
+            <li>입고 현황 보고<br><small>&gt; 상온/냉장/냉동 차량 중 0대 하역완료 PPC 내에 있다</small><br><small>&gt; 엘리베이터가 멈춰서 추가 하역이 불가능</small></li>
+            <li>냉장/냉동 입고 롤테이너가 있을 경우 워크인 보관 조치<br><small>&gt; 크루 3인 1개조 : 1인(조도확보) / 2인(하역)</small></li>
+            <li>(공간구현요청시) 분전함 차단기 OFF</li>
+            <li>상온 조도확보 가능시 핫스팟-VPN 연결 후 입고 수행<br><small>&gt; 크루 2인 1개조 : 1인(조도확보) / 1인(입고)</small></li>
+            <li>중간보고 : 긴급채널공유방</li>
+          </ul>
+          <div class="tl-note-chip">[보고양식] 입고·하역 지연 시 보고 예시 참고 (PPC탭)</div>
+        </td>
+        <td class="col-gm">
+          <ul class="tl-cell-list">
+            <li>입고 현황 상황파악 보고<br><small>&gt; 하역 전 차량 → 차량대기 요청, 미들마일 운영팀 공유</small></li>
+            <li>취소 진행 필요 주문번호 리스트 정리 → CS담당자 전달<br><small>1시간 이내 배달 예정건 취소 (문자 안내 후 쿠폰발송)</small><br><small>이후 예약주문건 대기 (정전 60분 초과시 재요청)</small></li>
+            <li>조치결과 OPS 채널 보고</li>
+          </ul>
+        </td>
+        <td class="col-space">
+          <ul class="tl-cell-list">
+            <li>(필요시) 워크인 분전함 차단기 OFF 요청<br><small>① 컨트롤박스 전원스위치 OFF → ② 커버 열어서 차단기 OFF → ③ 실내기 OFF → ④ 실외기 OFF</small><br><small>→ 복전시 역순</small></li>
+          </ul>
+        </td>
+        <td class="col-qa">상황 인지</td>
+        <td class="col-it"><span class="empty">—</span></td>
+        <td class="col-note">부록에 온도이슈 행동지침 추가 필요<br>(냉매보충, 재고이동 사진 포함)</td>
+      </tr>
+
+      <!-- ~20분 -->
+      <tr>
+        <td class="col-time">~20분</td>
+        <td class="col-phase">Phase 2</td>
+        <td class="col-ppc">
+          <ul class="tl-cell-list">
+            <li>전산망 확보 (CS 노트북 핫스팟, VPN 연결)<br><small>&gt; 픽업대기 주문건 확인 (전산 및 실물 점검)</small><br><small>&gt; 정상주문건: 보냉제 보완 및 라이더 인계</small><br><small>&gt; 취소주문건: 봉다리 회수 및 바구니에 상품 구분</small><br><small>※ 20분 기준 취소건 일괄처리</small></li>
+            <li>미출고 및 취소 주문건 구분하여 온도에 맞게 보관<br><small>2인 1조 / 냉동·냉장 구분 보관 / 적외선 온도계 사진촬영</small><br><small>※ 슬라이드 냉동고 가용공간 있을 경우 슬라이드 냉동고, 없으면 워크인 보관</small></li>
+            <li>중간보고: 워크인 온도, 픽업대기 주문 취소건 현황, 기타 특이사항</li>
+            <li>입고·주문처리·지원 인력검토 및 보고</li>
+          </ul>
+          <div class="tl-note-chip">[보고양식] 20분 보고 예시 참고 (PPC탭)</div>
+        </td>
+        <td class="col-gm">
+          <ul class="tl-cell-list">
+            <li>인력 추가 의사결정 / 미구인에 대한 인력 대응방안 마련</li>
+            <li>현장 상황 관리자 배정 (마감부재 or 심야입고 등)</li>
+            <li>조치결과 OPS 채널 보고, 타임라인 정리 시작</li>
+          </ul>
+        </td>
+        <td class="col-space">후속 조치사항 지시</td>
+        <td class="col-qa">
+          [확정전]<br>
+          상품 관능검사의 기준점 마련 필요<br>
+          <small>- 시기 / 워크인 온도 / 대상 상품 / 대상 유닛 등</small><br>
+          <small>- -15°C 이탈 이후 24시간 지속시 레벨검품 지속</small><br>
+          <span class="tl-note-chip">추후 확인 필요 (송규철님)</span>
+        </td>
+        <td class="col-it"><span class="empty">—</span></td>
+        <td class="col-note"><span class="empty">—</span></td>
+      </tr>
+
+      <!-- ~30분 -->
+      <tr>
+        <td class="col-time">~30분</td>
+        <td class="col-phase">Phase 2</td>
+        <td class="col-ppc">
+          <ul class="tl-cell-list">
+            <li>온도 체크 및 공유: 관리자 직접 수행<br><small>1) 슬라이드 냉동고: 1순위 박스 / 2순위 상품 / 모든 슬라이드 냉동고 측정</small><br><small>※ 주의: 바닥/외벽 측정 금지</small><br><small>2) 워크인: ~20분 내 1회 수행한 경우 제외</small></li>
+            <li>중간보고: 온도 측정결과 및 특이사항 (긴급채널공유방)</li>
+            <li>중간보고 후: PDA VPN 연결 진행<br><small>복전시 입고진행 / CANCEL 원복을 위해</small></li>
+          </ul>
+        </td>
+        <td class="col-gm">
+          <ul class="tl-cell-list">
+            <li>전체 주문건 취소진행 완료 확인</li>
+            <li>인력 추가 확보 결과 확인</li>
+            <li>관리자 배정 결과 확인</li>
+            <li>상황 모니터링 및 주요상황 공유</li>
+          </ul>
+        </td>
+        <td class="col-space">후속 조치사항 지시</td>
+        <td class="col-qa">상품 관능검사의 기준점 마련 필요<br><span class="tl-note-chip">논의사항 12</span></td>
+        <td class="col-it">상황 모니터링</td>
+        <td class="col-note">정전 발생 후 30분 내 잔여 픽업대기주문건 0건 확인<br><small>&gt; 30분 내 라이더 픽업 안 될 경우 라이더CS팀 확인 (부서 미정)</small></td>
+      </tr>
+
+      <!-- 장기화 시나리오 -->
+      <tr>
+        <td class="col-time" style="background:#FEF9E7; color:#92400E; font-weight:800; white-space:nowrap;">⚠️ 장기화 시<br>시나리오</td>
+        <td class="col-phase" style="background:#FEF9E7;"></td>
+        <td class="col-ppc" colspan="6" style="background:#FEF9E7;">
+          <div style="font-size:12px; color:#92400E; font-weight:700; margin-bottom:6px;">30분 이상 미복구 장기화될 경우</div>
+          <ul class="tl-cell-list" style="color:#555;">
+            <li>(운영팀) NN분 단위 온도 및 특이사항 보고 (TBD)</li>
+            <li>그 이상 장기화 → 허들로 긴급소통채널 소집 (초대자: ㅇㅇㅇㅇㅇ)<br><small>- 심야: 정전 지속될 경우 06-07시 / 영업시간: 30분? nn분? 이상 초과 유지시</small></li>
+          </ul>
+          <div style="font-size:12px; color:#92400E; font-weight:700; margin:8px 0 4px;">Key Point: 보관 상품 품질유지</div>
+          <ul class="tl-cell-list" style="color:#555;">
+            <li>(품질관리팀) 레벨검품 시점·대상·수량 타임라인 제공 / 녹음 기준 사진·워딩 전달</li>
+            <li>(운영팀/공간구현팀) 품온 유지 방식 검토<br><small>1안. 발전기차량 &amp; 슬라이드 냉동고 활용: 온도 유지상품 이동</small><br><small>2안. 미들마일 운영팀 협조: 온도 유지상품 임시 보관</small></li>
+            <li><strong>1안.</strong> 비상차량으로 조도확보 및 슬라이드 냉동고 연결 지원 <span class="tl-note-chip">가능성 희박</span></li>
+            <li><strong>2안.</strong> DC운영실 요청, 냉동/냉장 탑차 활용 민감상품 이동<br><small>&gt; 주간(00:00~00:00, 000 파트 000님) / 새벽(00:00~00:00, 미들마일운영팀 근무자)</small></li>
+          </ul>
+          <div style="font-size:12px; color:#92400E; font-weight:700; margin:8px 0 4px;">[운영팀 행동가이드 - 냉동차 이동시]</div>
+          <ul class="tl-cell-list" style="color:#555;">
+            <li>냉동차 수배 후 도착 예정시간 공유 (미들마일운영팀)</li>
+            <li>도착 1시간전 RT에 박스단위 우선 상차 시작</li>
+            <li>E/V 미운행시 도수운반 인력확보 (도착예정시간 공유시점부터 즉시)</li>
+            <li>도착 즉시 적외선온도계 활용, -18°C 유지 확인 후 상차 (타코메타지 교차체크)</li>
+            <li>차량 대기 혹은 주행여부는 미들마일운영팀에서 결정</li>
+          </ul>
+        </td>
+      </tr>
+
+      <!-- ══ Phase 3: 복전 완료 후 ══ -->
+      <tr class="phase-header"><td colspan="8">🟢 PHASE 3 — 복전 완료 후</td></tr>
+
+      <!-- 복전시 -->
+      <tr class="row-recovery">
+        <td class="col-time">✅ 복전시</td>
+        <td class="col-phase">Phase 3</td>
+        <td class="col-ppc">
+          <ul class="tl-cell-list">
+            <li>크루 업무 분배<br><small>&gt; 인원 집결, PDA 배분 - VPN 연결 확인</small><br><small>&gt; 입·출고 및 CANCEL 원복 등 작업 순차적 지시</small></li>
+            <li>워크인 분전함 ON</li>
+            <li>워크인·슬라이드 냉동고 온도체크<br><small>1) 판넬 온도계 체크 / 2) 적외선 온도계 측정 / 3) 온도 모니터링 확인</small></li>
+            <li>컨트롤러 30분 단위 재가동</li>
+            <li>CANCEL 존 확인 (CS 주문처리진행시)</li>
+            <li>입고작업 수행 및 동선 정리 지시</li>
+            <li>네트워크 원복 확인 후 보고 (20분내 복구)</li>
+            <li>중간보고 - 긴급채널공유방</li>
+          </ul>
+          <div class="tl-note-chip">[보고양식] 복전 보고 예시 참고 (PPC탭)</div>
+        </td>
+        <td class="col-gm">
+          <ul class="tl-cell-list">
+            <li>상황 모니터링 및 주요상황 공유</li>
+            <li>전체 주문건 취소진행 완료 확인</li>
+            <li>입고완료율 점검: 70% 시점 현장 확인<br><small>&gt; 동선정비 (P박스, RT정리완료) 후 주문차단 해제 수행</small></li>
+            <li>복전 여부 보고 — OPS 채널</li>
+            <li>네트워크 복귀 후 주문차단 해제</li>
+            <li>주문 차단 해제 보고 — OPS 채널</li>
+            <li>최종 타임라인 정리 후 보고 — OPS 채널</li>
+          </ul>
+        </td>
+        <td class="col-space">
+          (분전반OFF시) 워크인 분전함 차단기 ON 요청<br>
+          <small>① 실외기 ON → ② 실내기 ON → ③ 차단기 ON → ④ 컨트롤박스 ON</small><br><br>
+          사후처리 (실외기세척·컴프레셔교체 등)<br>
+          정전 사유에 대한 임차인과의 사후조치
+        </td>
+        <td class="col-qa">
+          <ul class="tl-cell-list">
+            <li>상품 관능검사 진행 요청</li>
+            <li>상품 이슈 발생 예상시 조치 방안 수립</li>
+            <li>특정 기준으로 상품 검수계획 수립<br><small>(정전 00분 or 온도 00°C 이탈 등)</small></li>
+            <li>품질지킴이 직접 방문·인원 추가 모집 지원 계획</li>
+          </ul>
+        </td>
+        <td class="col-it">네트워크 복구 확인</td>
+        <td class="col-note"><span class="tl-key">🟢 복구</span><br>(TBD) 레벨 검품 진행<br>(복전 후 몇분 내 완료해야하는지 확인 필요)</td>
+      </tr>
+
+    </tbody>
+  </table>
+  </div>
+
+
+    </tbody>
+  </table>
+  </div>
+
+    </tbody>
+  </table>
+  </div>
+
+</div><!-- /view-timeline -->
+
+<div class="footer">
+  ⚡ B마트 정전 대응 가이드 v3 · 현장용
+</div>
+
+<script>
+  function switchTab(id) {
+    ['ppc','timeline'].forEach(t => {
+      document.getElementById('tab-' + t).classList.toggle('active', t === id);
+      document.getElementById('view-' + t).classList.toggle('active', t === id);
+    });
+  }
+
+  function toggle(h) {
+    h.classList.toggle('open');
+    h.nextElementSibling.classList.toggle('open');
+  }
+
+  function toggleTl(h) {
+    h.classList.toggle('open');
+    h.nextElementSibling.classList.toggle('open');
+  }
+
+  function toggleSlack(el) {
+    el.classList.toggle('open');
+    el.nextElementSibling.classList.toggle('open');
+  }
+
+  function copySlack(id, btn) {
+    const text = document.getElementById(id).textContent;
+    const done = () => {
+      btn.textContent = '✅ 복사 완료!';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = '📋 복사하기'; btn.classList.remove('copied'); }, 2000);
+    };
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(text).then(done).catch(() => fallback(text, done));
+    } else { fallback(text, done); }
+  }
+
+  function fallback(text, cb) {
+    const ta = document.createElement('textarea');
+    ta.value = text; document.body.appendChild(ta); ta.select();
+    document.execCommand('copy'); document.body.removeChild(ta); cb();
+  }
+
+  /* 사진 슬롯 */
+  function showSlotPhoto(input, slotId) {
+    const slot = document.getElementById(slotId);
+    const img = slot.querySelector('img');
+    const icon = slot.querySelector('.slot-icon');
+    const label = slot.querySelector('.slot-label');
+    const del = slot.querySelector('.slot-delete');
+    const file = input.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+      img.src = e.target.result;
+      img.style.display = 'block';
+      slot.querySelectorAll('span').forEach(s => s.style.display = 'none');
+      if (icon) icon.style.display = 'none';
+      if (label) label.style.display = 'none';
+      del.style.display = 'block';
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function clearSlotPhoto(e, slotId) {
+    e.stopPropagation();
+    const slot = document.getElementById(slotId);
+    const img = slot.querySelector('img');
+    const icon = slot.querySelector('.slot-icon');
+    const label = slot.querySelector('.slot-label');
+    const del = slot.querySelector('.slot-delete');
+    const input = slot.querySelector('input');
+    img.src = ''; img.style.display = 'none';
+    slot.querySelectorAll('span').forEach(s => s.style.display = '');
+    if (icon) icon.style.display = '';
+    if (label) label.style.display = '';
+    del.style.display = 'none';
+    input.value = '';
+  }
+
+  function updateClock() {
+    document.getElementById('clock').textContent =
+      new Date().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' });
+  }
+  updateClock(); setInterval(updateClock, 30000);
+</script>
+</body>
+</html>
