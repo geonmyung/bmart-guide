@@ -860,9 +860,6 @@
         <td class="col-qa">상황 인지</td>
       </tr>
 
-      <!-- PHASE 2 헤더 -->
-      <tr class="phase-header"><td colspan="6">🟠 PHASE 2 — 대응 (~5분 ~ 복전 전)</td></tr>
-
       <!-- STEP 2 ~5분 -->
       <tr>
         <td class="col-time">STEP 2<br>~5분</td>
@@ -899,8 +896,7 @@
             <li><b>GM → 팀장 유선보고</b></li>
             <li>#wg-워크플레이스실_ppc_긴급상황대응방<br><b>✔️ 이모지 미답변자 유선 연락</b><br><small>대상 : 운영실장, 공간구현팀, 품질관리팀</small></li>
             <li>(원인파악 후) <b>주문차단 선조치 및 보고</b><br><small>채널 : #wg-워크플레이스실_ppc_긴급상황대응방</small></li>
-            <li><b>리더채널 공유</b> : b마트-ops<br><small>(우형) 물류기획실장·사업실장·커머스CX팀장<br>(우청) 운영실장·커머스운영지원실장·워크플레이스실장</small></li>
-            <li><small style="color:#EF4444;">(60분 이상 정전 유지 or 원인 파악 불가)<br>→ (팀장) 냉동탑차 필요대수 산정</small></li>
+            <li>(GM) <b>리더채널 공유</b> : b마트-ops<br><small>(우형) 물류기획실장·사업실장·커머스CX팀장<br>(우청) 운영실장·커머스운영지원실장·워크플레이스실장</small></li>
           </ul>
         </td>
         <td class="col-space">
@@ -913,19 +909,12 @@
             </li>
           </ul>
         </td>
-        <td class="col-qa">
-          <ul class="tl-cell-list">
-            <li>PPC 측정 온도 확인 및 <b>차량 수배 의사결정</b>
-              <ul style="list-style:none;padding-left:10px;margin-top:3px;font-size:11px;color:#555;">
-                <li>-10도 이상 : 냉동차량 3시간 내 수배</li>
-                <li>-12도 이상 : 냉동차량 5시간 내 수배</li>
-                <li>-15도 이상 : 냉동차량 12시간 내 수배</li>
-              </ul>
-            </li>
-            <li>PPC 측정온도 이탈한 경우 → <b>차량 제원에 따른 상품 이동 범위 제공</b><br><small>1t : 8대 / 3.5t : 15대 / 5t : NN대 적치 기준</small></li>
-          </ul>
-        </td>
+        <td class="col-qa">상황 인지</td>
       </tr>
+
+
+      <!-- PHASE 2 헤더 -->
+      <tr class="phase-header"><td colspan="6">🟠 PHASE 2 — 대응 (~10분 ~ 복전 전)</td></tr>
 
       <!-- STEP 3 ~10분 -->
       <tr>
@@ -965,8 +954,12 @@
                 <li>CS담당자 전달 / 고객 안내 요청</li>
               </ul>
             </li>
-            <li><b>리더채널 공유</b> : B마트 OPS 채널</li>
-            <li><small style="color:#EF4444;">(60분 이상 or 원인 파악 불가)<br>→ (GM) 긴급 허들 소집<br>→ (팀장) 냉동 탑차 수배 요청</small></li>
+            <li>(GM) <b>리더채널 공유</b> : b마트-ops</li>
+            <li><small style="color:#EF4444;">(60분 이상 정전 유지 or 원인 파악 불가)<br>
+              <ul style="list-style:none;padding-left:10px;margin-top:3px;font-size:11px;color:#555;">
+                <li>(GM) 긴급 허들 소집 : 팀장, 공간구현팀, 품질관리팀</li>
+                <li>(팀장) 냉동 탑차 발생 +3시간 도착 업무 협조요청 (to 미들마일운영팀)</li>
+              </ul></small></li>
           </ul>
         </td>
         <td class="col-space">
@@ -982,7 +975,25 @@
             <li>정전 사유가 내부 설비 원인일 경우 <b>진단여부 공유 및 업체 수배</b></li>
           </ul>
         </td>
-        <td class="col-qa">모니터링</td>
+        <td class="col-qa">
+          <ul class="tl-cell-list">
+            <li>PPC 측정 온도 확인 및 <b>품질 우려에 따른 차량 수배 의사결정</b><br><small>[기준 가이드는 아래와 같음]</small>
+              <ul style="list-style:none;padding-left:10px;margin-top:3px;font-size:11px;color:#555;">
+                <li>온도 측정 -10도 이탈 : 냉동차량 3시간 내 수배 필요</li>
+                <li>온도 측정 -12도 이탈 : 냉동차량 5시간 내 수배 필요</li>
+                <li>온도 측정 -15도 이탈 : 냉동차량 12시간 내 수배 필요</li>
+              </ul>
+            </li>
+            <li>PPC 측정온도 이탈한 경우 → <b>상품 이동 우선순위 안내</b>
+              <ul style="list-style:none;padding-left:10px;margin-top:3px;font-size:11px;color:#555;">
+                <li>수배 규모·조치예정시간에 따라 lv1 → lv2 → lv3 순서로 이동<br><small style="color:#888;">(6시간 이내 / 12시간 이내 / 초과)</small></li>
+                <li><b>lv1.</b> 아이스크림(파인트>콘·샌드·막대), 정육, 냉동과일</li>
+                <li><b>lv2.</b> 수산</li>
+                <li><b>lv3.</b> 빵·떡류, 가공품 (요리·반찬·치즈 등)</li>
+              </ul>
+            </li>
+          </ul>
+        </td>
       </tr>
 
       <!-- STEP 4 ~20분 -->
@@ -1024,9 +1035,12 @@
         <td class="col-phase">Phase 2</td>
         <td class="col-ppc">
           <ul class="tl-cell-list">
-            <li><b>인력 구인 수행</b></li>
-            <li><b>5차보고</b> : #wg-워크플레이스실_ppc_긴급상황대응방</li>
-            <li><b>크루 PDA 분배 및 VPN 연결</b></li>
+            <li><b>인력 구인 수행</b> (자체 내부풀, 조기출근 등)
+              <ul style="list-style:none;padding-left:10px;margin-top:3px;font-size:11px;color:#555;">
+                <li>구인 완료 후 긴급상황 대응방 공유</li>
+              </ul>
+            </li>
+            <li><b>크루 PDA VPN 연결 진행</b></li>
           </ul>
         </td>
         <td class="col-gm">
@@ -1047,7 +1061,7 @@
         <td class="col-phase" style="background:#FEE2E2; color:#991B1B; font-size:10px; font-weight:700;">장기화<br>판단</td>
         <td class="col-ppc" style="background:#FFF0F0;">
           <ul class="tl-cell-list">
-            <li><b>60분 단위 온도 측정 수행</b>
+            <li><b>1시간 단위 온도 측정 수행</b>
               <ul style="list-style:none;padding-left:10px;margin-top:3px;font-size:11px;color:#555;">
                 <li>워크인 문 개방 후 가장 가까운 랙의 어깨위치 측정 (15cm 이격)</li>
                 <li style="color:#EF4444;">온도 이탈시 : 채널 즉시 보고</li>
@@ -1066,23 +1080,32 @@
         <td class="col-space" style="background:#FFF0F0;">후속 조치사항 지시</td>
         <td class="col-qa" style="background:#FFF0F0;">
           <ul class="tl-cell-list">
-            <li>PPC 측정 온도 확인 및 <b>품질 의사결정</b>
+            <li>PPC 측정 온도 확인 및 <b>품질 의사결정</b><br><small>[기준 가이드는 아래와 같음]</small>
               <ul style="list-style:none;padding-left:10px;margin-top:3px;font-size:11px;color:#555;">
-                <li>-10도↑ : 냉동차량 3시간 내 수배</li>
-                <li>-12도↑ : 냉동차량 5시간 내 수배</li>
-                <li>-15도↑ : 냉동차량 12시간 내 수배</li>
+                <li>온도 측정 -10도 이탈 : 냉동차량 3시간 내 수배 필요</li>
+                <li>온도 측정 -12도 이탈 : 냉동차량 5시간 내 수배 필요</li>
+                <li>온도 측정 -15도 이탈 : 냉동차량 12시간 내 수배 필요</li>
               </ul>
             </li>
-            <li>차량 도착 시 <b>先 이동 상품 판단</b>
+            <li>PPC 측정온도 이탈한 경우 → <b>상품 이동 우선순위 안내</b>
               <ul style="list-style:none;padding-left:10px;margin-top:3px;font-size:11px;color:#555;">
-                <li>냉동 : 프리미엄 아이스크림(나뚜루·하겐다즈 등), 대패 육류 등</li>
-                <li>냉장 : 육류(원물), 유제품 등</li>
-                <li>1t:8대 / 3.5t:15대 / 5t:NN대 적치 기준 상품 이동 가이드 제공</li>
+                <li>수배 규모에 따라 lv1 → lv2 → lv3 순서로 이동</li>
+                <li><b>lv1.</b> 아이스크림(파인트>콘·샌드·막대), 정육, 냉동과일</li>
+                <li><b>lv2.</b> 수산</li>
+                <li><b>lv3.</b> 빵·떡류, 가공품 (요리·반찬·치즈 등)</li>
               </ul>
             </li>
-            <li>1시간 간격 모니터링 (내부 냉기유지)</li>
-            <li>2시간 이상 정전유지 시 → 종료시점 사후검품 실시<br><small>단, 내부온도 -18℃ 유지시 종료</small></li>
-            <li>복구 후 사후검품 우선순위<br><small>파인트·콘·샌드·막대아이스크림·냉동과일 확인<br>→ 이탈 시 lv 검품 프로세스 후속 진행</small></li>
+            <li><b>모니터링 시점</b>
+              <ul style="list-style:none;padding-left:10px;margin-top:3px;font-size:11px;color:#555;">
+                <li>1시간 단위 온도측정결과 및 온도 모니터링</li>
+                <li>2시간 이상 유지 예정 : 사후검품 안내
+                  <ul style="list-style:disc;padding-left:14px;margin-top:2px;">
+                    <li>종료시점 사후검품 실시<br><small style="color:#888;">(단, 내부온도 -18℃ 유지시 종료)</small></li>
+                    <li>복구 후 사후검품 우선순위 → 이탈 시 lv 검품 프로세스 후속 진행<br><small style="color:#888;">파인트·콘·샌드·막대아이스크림·정육(대패류)·냉동과일 녹음</small></li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
           </ul>
         </td>
       </tr>
