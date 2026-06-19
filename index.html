@@ -368,7 +368,7 @@
       </ul>
       <div style="margin:12px 0 6px; font-size:14px; font-weight:800; color:#0E7490;">3. 확인 내용 슬랙 스레드로 공유</div>
       <ul style="margin:0; padding-left:20px; font-size:13px; line-height:1.8;">
-        <li><span style="font-family:monospace; background:#F0F9FF; padding:2px 6px; border-radius:4px; font-size:12px; color:#0369A1;">#wg-워크플레이스실_ppc_긴급상황대응방</span></li>
+        <li><span style="font-family:monospace; background:#F0F9FF; padding:2px 6px; border-radius:4px; font-size:12px; color:#0369A1;">#YYYYMMDD-0000PPC-OO발생</span></li>
       </ul>
 
       <!-- 현장 사진 촬영 예시 -->
@@ -420,11 +420,11 @@
           <div style="flex:1;"></div>
         </div>
       </div>
-         <div class="slack-toggle open" onclick="toggleSlack(this)">
+         <div class="slack-toggle" onclick="toggleSlack(this)">
         💬 슬랙 2차 보고 예시 <span class="s-chevron">›</span>
       </div>
-      <div class="slack-box open">
-        <div class="slack-channel">#wg-워크플레이스실_ppc_긴급상황대응방 (원문 스레드)</div>
+      <div class="slack-box">
+        <div class="slack-channel">#YYYYMMDD-0000PPC-OO발생 (원문 스레드)</div>
         <div class="slack-msg" id="s2">[○○○○PPC 정전현황 보고 (2차)]
 ● 00:00 부 정전 발생으로 워크플로우 제출
 ● 관리소 방문 결과 (확인 체크리스트)
@@ -478,7 +478,7 @@
             </div>
           </div>
         </li>
-        <li><strong>3차 보고</strong><small>#wg-워크플레이스실_ppc_긴급상황대응방</small></li>
+        <li><strong>3차 보고</strong><small>#YYYYMMDD-0000PPC-OO발생</small></li>
       </ol>
     </div>
   </div>
@@ -706,7 +706,7 @@
         💬 슬랙 복전 보고 예시 <span class="s-chevron">›</span>
       </div>
       <div class="slack-box">
-        <div class="slack-channel">#wg-워크플레이스실_ppc_긴급상황대응방</div>
+        <div class="slack-channel">#YYYYMMDD-0000PPC-OO발생</div>
         <div class="slack-msg" id="s-restore">○○시 ○○분 부 전력 복구 완료되었습니다.
 정전 사후조치 체크 진행 후 보고드리겠습니다.
 
@@ -815,8 +815,7 @@
 .tl-cell-list > li:nth-child(6)::before { content: '6.'; color: #0E7490; font-weight: 900; }
 .tl-cell-list > li:nth-child(7)::before { content: '7.'; color: #0E7490; font-weight: 900; }
 .tl-cell-list > li:nth-child(8)::before { content: '8.'; color: #0E7490; font-weight: 900; }
-.tl-cell-list li:nth-child(7)::before { content: '⑦'; color: #0E4F4D; font-weight: 900; }
-.tl-cell-list li:nth-child(8)::before { content: '⑧'; color: #0E4F4D; font-weight: 900; }
+.tl-cell-list > li:nth-child(9)::before { content: '9.'; color: #0E7490; font-weight: 900; }
 
 .tl-note-chip {
   display: inline-block; background: #FEF3C7; border: 1px solid #FCD34D;
@@ -890,11 +889,18 @@
         <td class="col-gm"><ul class="tl-cell-list">
           <li><strong>GM → 팀장 유선보고</strong></li>
           <li><strong>wg-워크플레이스실_ppc_긴급상황대응방, 이모지(✔️) 미답변자 유선 연락</strong><br><small>1) 대상 : 운영실장, 공간구현팀, 품질관리팀</small></li>
-          <li><strong>(원인파악 후) 긴급운영중단 선조치 및 보고</strong><br><small>1) 공유채널 : wg-워크플레이스실_ppc_긴급상황대응방</small></li>
-          <li><strong>리더채널 공유 : b마트-ops</strong><br><small>1) 태그대상 : (우형)물류기획실장, (우형)사업실장, (우청)운영실장, (우청)커머스운영지원실장, (우청)워크플레이스실장, (우형)커머스CX팀장</small></li>
+          <li><strong>긴급운영중단 선조치 및 보고</strong><br><small>1) 공유채널 : wg-워크플레이스실_ppc_긴급상황대응방</small></li>
+          <li><strong>리더채널 공유 : b마트-ops</strong><br>
+            <small>1) 태그대상 :</small><br>
+            <small style="padding-left:12px;"><strong>(우형)</strong> 물류기획실장, 사업실장, B마트운영팀장, 커머스CX팀, 물류주문플랫폼팀</small><br>
+            <small style="padding-left:12px;"><strong>(우청)</strong> 운영실장, 커머스운영지원실장, 워크플레이스실장</small><br>
+            <small><strong>2) 최초 상황공유 이후 전사 장애대응 채널 구성 : OPS 채널 및 긴급상황 대응방 링크 연결</strong></small><br>
+            <small style="padding-left:12px;">- 채널명 : <strong>YYYYMMDD-0000PPC-00발생</strong></small><br>
+            <small style="padding-left:12px;">ex) 20260513-김포PPC-정전발생</small>
+          </li>
         </ul></td>
         <td class="col-space"><ul class="tl-cell-list">
-          <li><strong>(관리소 부재시) 관리소 유선 연락하여 정전 수준 파악</strong><br><small>1) 정전 원인 / 정전 범위 / 예상 복구시점 등</small><br><small>2) 상황 파악 후 PPC 공유 : wg-워크플레이스실_ppc_긴급상황대응방</small></li>
+          <li><strong>(관리소 부재시) 관리소 유선 연락하여 정전 수준 파악</strong><br><small>1) 정전 원인 / 정전 범위 / 예상 복구시점 등</small><br><small>2) 상황 파악 후 PPC 공유 : #YYYYMMDD-0000PPC-OO발생</small></li>
           <li><strong>정전 원인 파악 후 PPC 분전반 사진촬영, 차단기 OFF 지시</strong><br><small>1) 필요시 온도측정 요청</small></li>
         </ul></td>
         <td class="col-qa"><strong>(정전 원인이 설비 이슈로 추정 될 경우) 온도측정 요청</strong></td>
@@ -916,12 +922,12 @@
           <li><strong>(입고중 정전) 입고 진척도 파악 후 보고</strong></li>
           <li><strong>(하역중 정전) 조도 확보 후 PPC 내 입점한 롤테이너 온도별 보관 / 미입점 재상차</strong><br><small>→ 진행간 3인 1조 수행 (1명 조도 확보, 2인 1조 RT이동)</small></li>
           <li><strong>(영업중 정전) 전원 작업 중지 후 대기</strong></li>
-          <li><strong>3차보고 : wg-워크플레이스실_ppc_긴급상황대응방</strong></li>
+          <li><strong>3차보고 : #YYYYMMDD-0000PPC-OO발생</strong></li>
         </ul></td>
         <td class="col-gm"><ul class="tl-cell-list">
           <li><strong>입고/하역 차량 협조요청 (팀장)</strong><br><small>1) 하역 전 차량 : 미들마일운영팀 협조, 차량대기 요청</small><br><small>2) 하역 후 미입점 R/T : 재상차</small></li>
           <li><strong>주문취소 요청 (GM)</strong><br><small>1) 리스트 추출 : 예약 1시간 이내 배달예정건 취소, 이후건 대기</small><br><small>2) CS담당자 전달 (@.커씨 태그 / 고객 안내 요청)</small></li>
-          <li><strong>리더채널 공유 : b마트-ops(GM)</strong></li>
+          <li><strong>채널공유 : #YYYYMMDD-0000PPC-OO발생</strong></li>
           <li><strong>(60분 이상 정전 유지 예상 or 원인 파악 불가)</strong><br><small>1) (GM) 긴급 허들 소집 : 팀장, 공간구현팀, 품질관리팀 담당자 1명</small><br><small>2) 정전 장기화 상황대비 비상소통망 구축</small></li>
         </ul></td>
         <td class="col-space"><ul class="tl-cell-list">
@@ -939,13 +945,13 @@
             <small>1) WMS 대시보드로 취소/픽업대기 주문건 확인 (전산 및 실물)</small><br>
             <small>2) 고객센터와 연락망 구축(슬랙)</small>
           </li>
-          <li><strong>4차보고 : wg-워크플레이스실_ppc_긴급상황대응방</strong></li>
+          <li><strong>4차보고 : #YYYYMMDD-0000PPC-OO발생</strong></li>
           <li><strong>입고, 주문처리, 지원 인력검토 및 보고</strong></li>
         </ul></td>
         <td class="col-gm"><ul class="tl-cell-list">
           <li><strong>인력 추가 의사 결정 / 미구인에 대한 인력 대응방안 마련</strong></li>
           <li><strong>현장 상황 관리자 배정 : 마감부재 or 심야입고</strong></li>
-          <li><strong>리더채널 공유 : b마트-ops(GM)</strong><br><small>1) 타임라인 정리 시작 : 이벤트 단위 작성</small></li>
+          <li><strong>채널공유 : #YYYYMMDD-0000PPC-OO발생</strong><br><small>1) 타임라인 정리 시작 : 이벤트 단위 작성</small></li>
         </ul></td>
         <td class="col-space"><strong>(설비이슈 판단시) 업체 도착 ETA 및 초동조치 지시</strong></td>
         <td class="col-qa"><strong>모니터링</strong></td>
@@ -962,7 +968,7 @@
           <li><strong>전체 주문건 취소진행 완료 확인</strong></li>
           <li><strong>인력 추가 확보 결과 확인</strong></li>
           <li><strong>관리자 배정 결과 확인 (관리자 부재시)</strong></li>
-          <li><strong>(GM) 리더채널 공유 : b마트-ops</strong></li>
+          <li><strong>채널공유 : #YYYYMMDD-0000PPC-OO발생</strong></li>
         </ul></td>
         <td class="col-space"><strong>후속 조치사항 지시</strong></td>
         <td class="col-qa"><strong>모니터링</strong></td>
@@ -991,7 +997,7 @@
         <td class="col-time"><strong>복전시</strong></td>
         <td class="col-phase">Phase 3</td>
         <td class="col-ppc"><ul class="tl-cell-list">
-          <li><strong>크루 업무 분배</strong><br>
+          <li><strong>복전 보고 및 크루 업무 분배 : #YYYYMMDD-0000PPC-00발생</strong><br>
             <small>1) 인원 집결</small><br>
             <small>2) PDA 배분 - WMS 연결 확인 (VPN 등)</small><br>
             <small>3) 입고 우선 > 출고/재고원복 후순위</small>
@@ -1002,16 +1008,23 @@
           <li><strong>CANCEL 존 잔여재고 정리</strong></li>
           <li><strong>입고 동선 정리 확인</strong></li>
           <li><strong>네트워크 원복 확인 후 보고(20분내 복구)</strong></li>
-          <li><strong>조치결과 보고 - wg-워크플레이스실_ppc_긴급상황대응방</strong></li>
+          <li><strong>네트워크 해제 시점 잔여주문 수행 가능여부 판단 후 보고</strong></li>
           <li><strong>품질 가이드 - 검품 수행 및 회신</strong></li>
         </ul></td>
         <td class="col-gm"><ul class="tl-cell-list">
-          <li><strong>리더채널 공유 : B마트 OPS 채널 - 복전상황 공유</strong></li>
-          <li><strong>전체 주문 취소진행 완료 확인</strong></li>
-          <li><strong>긴급운영중단 해제 준비</strong><br><small>1) 입고완료율 점검 : 70% 시점 현장 확인</small><br><small>2) 동선정비 (P박스, RT정리완료) 후 주문차단 해제 수행</small></li>
-          <li><strong>네트워크 복귀 후 주문차단 해제</strong></li>
-          <li><strong>리더채널 공유 : B마트 OPS 채널 — 주문차단 해제 공유</strong></li>
-          <li><strong>리더채널 공유 : B마트 OPS 채널 — 타임라인 정리</strong></li>
+          <li><strong>전체 주문 취소진행 완료 확인</strong><br>
+            <small>1) PPC 현장 파악 → 취소 후 잔여 주문 처리가능여부 확인</small><br>
+            <small>2) 해제시간대 예상주문 확인</small>
+          </li>
+          <li><strong>긴급운영중단 해제 준비</strong><br>
+            <small>1) 입고완료율 점검 : 70% 시점 현장 확인</small><br>
+            <small>2) 동선정비 (P박스, RT정리완료) 후 주문차단 해제 수행</small><br>
+            <small>3) 네트워크 복전시점 잔여주문건 처리 가능여부 체크</small><br>
+            <small>4) 커머스CX팀 소통하여 잔여주문 취소 중단 전달</small>
+          </li>
+          <li><strong>네트워크 복귀 및 현장 소통 후 주문차단 해제</strong></li>
+          <li><strong>리더채널 공유 : b마트-ops 채널 — 영업재개 공유</strong></li>
+          <li><strong>리더채널 공유 : b마트-ops 채널 — 타임라인 정리</strong></li>
         </ul></td>
         <td class="col-space"><ul class="tl-cell-list">
           <li><strong>워크인 분전함 차단기 ON 요청</strong><br>
@@ -1126,6 +1139,61 @@
       new Date().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' });
   }
   updateClock(); setInterval(updateClock, 30000);
+
+  /* 타임라인 테이블 헤더 상단 고정 */
+  (function() {
+    var thead = document.querySelector('.tl-table thead');
+    var wrap = document.querySelector('.tl-table-wrap');
+    if (!thead || !wrap) return;
+    var clone = thead.cloneNode(true);
+    var bar = document.createElement('div');
+    var tabsEl = document.querySelector('.main-tabs');
+    var stickyTop = tabsEl ? (tabsEl.offsetTop + tabsEl.offsetHeight) : 0;
+    bar.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:80;overflow-x:auto;display:none;background:#2AC1BC;';
+    bar.className = 'sticky-tl-header';
+    var tbl = document.createElement('table');
+    tbl.className = 'tl-table';
+    tbl.style.cssText = 'min-width:900px;width:100%;border-collapse:collapse;font-size:12px;';
+    tbl.appendChild(clone);
+    bar.appendChild(tbl);
+    document.body.appendChild(bar);
+
+    function syncWidths() {
+      var origThs = thead.querySelectorAll('th');
+      var cloneThs = clone.querySelectorAll('th');
+      for (var i = 0; i < origThs.length; i++) {
+        cloneThs[i].style.width = origThs[i].offsetWidth + 'px';
+      }
+      tbl.style.width = thead.closest('table').offsetWidth + 'px';
+    }
+
+    function onScroll() {
+      var viewTl = document.getElementById('view-timeline');
+      if (!viewTl || !viewTl.classList.contains('active')) { bar.style.display = 'none'; return; }
+      var rect = thead.getBoundingClientRect();
+      var wrapRect = wrap.getBoundingClientRect();
+      var tabsBottom = tabsEl ? tabsEl.getBoundingClientRect().bottom : 0;
+      if (rect.bottom < tabsBottom && wrapRect.bottom > tabsBottom) {
+        syncWidths();
+        bar.scrollLeft = wrap.scrollLeft;
+        bar.style.top = tabsBottom + 'px';
+        bar.style.display = 'block';
+      } else {
+        bar.style.display = 'none';
+      }
+    }
+
+    wrap.addEventListener('scroll', function() {
+      bar.scrollLeft = wrap.scrollLeft;
+    });
+    bar.addEventListener('scroll', function() {
+      wrap.scrollLeft = bar.scrollLeft;
+    });
+
+    window.addEventListener('scroll', onScroll, {passive: true});
+    window.addEventListener('resize', onScroll);
+    document.addEventListener('scroll', onScroll, {passive: true});
+  })();
 
   function openLightbox(src) {
     const lb = document.createElement('div');
