@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PPC 정전 긴급대응 체계 구축 · 과제 보고</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: #F1F5F9; color: #0F172A; font-size: 15px; line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── 레이아웃 ── */
+  .layout { display: flex; min-height: 100vh; }
+  .sidebar {
+    width: 280px; flex-shrink: 0; background: #fff;
+    border-right: 1px solid #E2E8F0; padding: 40px 24px;
+    position: sticky; top: 0; height: 100vh;
+  }
+  .main { flex: 1; min-width: 0; padding: 44px 56px 80px; max-width: 1200px; }
+
+  /* ── 사이드바 ── */
+  .sb-team { font-size: 17px; font-weight: 800; letter-spacing: -0.3px; }
+  .sb-chip {
+    display: inline-block; margin-top: 10px; padding: 4px 10px;
+    background: #F1F5F9; border-radius: 6px; font-size: 12px; color: #64748B; font-weight: 600;
+  }
+  .sb-divider { border: none; border-top: 1px solid #E2E8F0; margin: 24px 0; }
+  .sb-label { font-size: 12px; font-weight: 700; color: #64748B; margin-bottom: 12px; }
+  .sb-nav-item {
+    display: block; padding: 14px 18px; border-radius: 12px;
+    background: #1E293B; color: #fff; font-size: 14px; font-weight: 700;
+    box-shadow: 0 4px 12px rgba(15,23,42,.18); text-decoration: none;
+  }
+  .sb-nav-sub { margin-top: 14px; }
+  .sb-nav-sub a {
+    display: block; padding: 8px 18px; font-size: 13px; color: #64748B;
+    text-decoration: none; border-radius: 8px;
+  }
+  .sb-nav-sub a:hover { background: #F1F5F9; color: #0F172A; }
+
+  /* ── 헤더 ── */
+  .page-head { display: flex; align-items: flex-start; gap: 16px; flex-wrap: wrap; }
+  .page-head-text { flex: 1; min-width: 300px; }
+  h1 { font-size: 32px; font-weight: 800; letter-spacing: -0.8px; line-height: 1.3; }
+  .h1-sub { font-size: 14px; color: #94A3B8; margin-top: 4px; }
+  .head-btns { display: flex; gap: 10px; align-items: center; padding-top: 6px; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 11px 18px; border-radius: 10px; font-size: 13.5px; font-weight: 700;
+    text-decoration: none; transition: transform .12s, box-shadow .12s;
+  }
+  .btn:hover { transform: translateY(-1px); }
+  .btn-outline { background: #fff; color: #334155; border: 1px solid #E2E8F0; box-shadow: 0 1px 3px rgba(15,23,42,.06); }
+  .btn-dark { background: #0F172A; color: #fff; box-shadow: 0 4px 14px rgba(15,23,42,.25); }
+
+  .meta-line { margin-top: 18px; font-size: 13.5px; color: #94A3B8; }
+  .meta-line strong { color: #334155; }
+  .status-pill {
+    display: inline-flex; align-items: center; gap: 8px; margin-top: 12px;
+    background: #fff; border: 1px solid #E2E8F0; border-radius: 12px;
+    padding: 10px 16px; font-size: 13.5px; font-weight: 600; color: #334155;
+    box-shadow: 0 1px 3px rgba(15,23,42,.05);
+  }
+  .status-dot { width: 8px; height: 8px; border-radius: 50%; background: #3B82F6; }
+
+  /* ── 섹션 ── */
+  .section { margin-top: 48px; }
+  .sec-head { display: flex; align-items: center; gap: 12px; padding-bottom: 14px; border-bottom: 2px solid #0F172A; }
+  .sec-num {
+    width: 28px; height: 28px; flex-shrink: 0; border-radius: 8px;
+    background: #0F172A; color: #fff; font-size: 13px; font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .sec-title { font-size: 19px; font-weight: 800; letter-spacing: -0.4px; }
+  .sec-desc { font-size: 13px; color: #94A3B8; font-weight: 500; }
+
+  .card {
+    background: #fff; border-radius: 16px; padding: 30px 34px; margin-top: 20px;
+    box-shadow: 0 1px 3px rgba(15,23,42,.06), 0 8px 24px rgba(15,23,42,.04);
+  }
+  .card-headline { font-size: 19px; font-weight: 800; letter-spacing: -0.4px; }
+  .card-body { margin-top: 10px; font-size: 14.5px; color: #475569; }
+
+  .problem-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 22px; }
+  .problem {
+    background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 22px 24px;
+  }
+  .problem-chip {
+    display: inline-block; padding: 3px 9px; background: #E2E8F0; border-radius: 6px;
+    font-size: 12px; font-weight: 700; color: #475569;
+  }
+  .problem h3 { margin-top: 12px; font-size: 15.5px; font-weight: 800; letter-spacing: -0.3px; }
+  .problem p { margin-top: 8px; font-size: 13.5px; color: #64748B; }
+
+  /* ── KEY SUMMARY ── */
+  .key-summary {
+    background: #1E293B; border-radius: 16px; padding: 32px 36px; margin-top: 20px;
+    color: #fff; box-shadow: 0 12px 32px rgba(15,23,42,.28);
+  }
+  .ks-chip {
+    display: inline-block; padding: 5px 12px; background: rgba(45,212,191,.15);
+    border: 1px solid rgba(45,212,191,.4); border-radius: 8px;
+    font-size: 12px; font-weight: 800; letter-spacing: 1px; color: #2DD4BF;
+  }
+  .ks-headline { margin-top: 16px; font-size: 21px; font-weight: 800; letter-spacing: -0.4px; line-height: 1.5; }
+  .ks-rows { margin-top: 24px; }
+  .ks-row {
+    display: flex; gap: 24px; padding: 13px 0;
+    border-top: 1px dashed rgba(148,163,184,.3); font-size: 14px;
+  }
+  .ks-row dt { width: 130px; flex-shrink: 0; font-weight: 800; color: #94A3B8; }
+  .ks-row dd { color: #E2E8F0; }
+  .ks-row dd strong { color: #2DD4BF; }
+
+  /* ── Phase 플로우 ── */
+  .phase-flow { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-top: 20px; }
+  .phase-card {
+    background: #fff; border-radius: 16px; padding: 24px 26px; position: relative;
+    box-shadow: 0 1px 3px rgba(15,23,42,.06), 0 8px 24px rgba(15,23,42,.04);
+    border-top: 4px solid;
+  }
+  .phase-card.p1 { border-color: #EF4444; }
+  .phase-card.p2 { border-color: #F59E0B; }
+  .phase-card.p3 { border-color: #10B981; }
+  .phase-label { font-size: 12px; font-weight: 800; letter-spacing: 1px; }
+  .p1 .phase-label { color: #EF4444; }
+  .p2 .phase-label { color: #D97706; }
+  .p3 .phase-label { color: #059669; }
+  .phase-name { margin-top: 6px; font-size: 17px; font-weight: 800; letter-spacing: -0.3px; }
+  .phase-time { font-size: 12.5px; color: #94A3B8; font-weight: 600; margin-top: 2px; }
+  .phase-card ul { margin-top: 14px; padding-left: 0; list-style: none; }
+  .phase-card li {
+    font-size: 13.5px; color: #475569; padding: 5px 0 5px 16px; position: relative;
+  }
+  .phase-card li::before {
+    content: ''; position: absolute; left: 0; top: 13px;
+    width: 6px; height: 6px; border-radius: 50%; background: #CBD5E1;
+  }
+
+  /* ── 타임 스텝 ── */
+  .step-strip { display: flex; gap: 0; margin-top: 22px; align-items: stretch; }
+  .step-item { flex: 1; text-align: center; position: relative; padding: 0 4px; }
+  .step-item::after {
+    content: '→'; position: absolute; right: -8px; top: 12px;
+    color: #CBD5E1; font-size: 15px; font-weight: 700;
+  }
+  .step-item:last-child::after { display: none; }
+  .step-time {
+    display: inline-block; padding: 5px 12px; border-radius: 999px;
+    background: #0F172A; color: #fff; font-size: 12.5px; font-weight: 800;
+  }
+  .step-item.warn .step-time { background: #EF4444; }
+  .step-item.done .step-time { background: #10B981; }
+  .step-label { margin-top: 10px; font-size: 13px; font-weight: 700; color: #334155; line-height: 1.45; }
+  .step-sub { font-size: 11.5px; color: #94A3B8; margin-top: 3px; line-height: 1.4; }
+
+  /* ── R&R 그리드 ── */
+  .rr-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 20px; }
+  .rr-card {
+    background: #fff; border-radius: 14px; padding: 22px;
+    box-shadow: 0 1px 3px rgba(15,23,42,.06), 0 8px 24px rgba(15,23,42,.04);
+  }
+  .rr-icon { font-size: 22px; }
+  .rr-name { margin-top: 8px; font-size: 14.5px; font-weight: 800; letter-spacing: -0.3px; }
+  .rr-role { font-size: 11.5px; color: #94A3B8; font-weight: 600; margin-top: 1px; }
+  .rr-card ul { margin-top: 12px; list-style: none; }
+  .rr-card li {
+    font-size: 12.5px; color: #475569; padding: 4px 0 4px 14px; position: relative; line-height: 1.5;
+  }
+  .rr-card li::before {
+    content: ''; position: absolute; left: 0; top: 11px;
+    width: 5px; height: 5px; border-radius: 50%; background: #CBD5E1;
+  }
+
+  /* ── 효과 스탯 ── */
+  .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 20px; }
+  .stat-card {
+    background: #fff; border-radius: 14px; padding: 26px 24px; text-align: center;
+    box-shadow: 0 1px 3px rgba(15,23,42,.06), 0 8px 24px rgba(15,23,42,.04);
+  }
+  .stat-num { font-size: 34px; font-weight: 800; letter-spacing: -1px; color: #0F172A; }
+  .stat-num small { font-size: 17px; font-weight: 800; }
+  .stat-label { margin-top: 6px; font-size: 13.5px; font-weight: 700; color: #334155; }
+  .stat-sub { margin-top: 3px; font-size: 12px; color: #94A3B8; }
+
+  .next-list { margin-top: 20px; }
+  .next-item {
+    background: #fff; border-radius: 12px; padding: 18px 24px; margin-top: 10px;
+    display: flex; align-items: center; gap: 16px;
+    box-shadow: 0 1px 3px rgba(15,23,42,.06);
+  }
+  .next-num {
+    width: 26px; height: 26px; flex-shrink: 0; border-radius: 50%;
+    background: #F1F5F9; color: #334155; font-size: 12.5px; font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .next-item p { font-size: 14px; color: #334155; }
+  .next-item p strong { font-weight: 800; }
+
+  .footer { margin-top: 60px; text-align: center; font-size: 12.5px; color: #94A3B8; }
+
+  /* ── 반응형 ── */
+  @media (max-width: 1024px) {
+    .sidebar { display: none; }
+    .main { padding: 32px 20px 60px; }
+    .problem-grid, .phase-flow, .stat-grid { grid-template-columns: 1fr; }
+    .rr-grid { grid-template-columns: 1fr 1fr; }
+    .step-strip { flex-wrap: wrap; gap: 14px 0; }
+    .step-item { flex: 0 0 33.3%; }
+    h1 { font-size: 25px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="layout">
+
+  <!-- ═══ 사이드바 ═══ -->
+  <aside class="sidebar">
+    <div class="sb-team">B마트운영팀 · 커머스운영센터</div>
+    <span class="sb-chip">이슈 대응 체계 보고</span>
+    <hr class="sb-divider">
+    <div class="sb-label">과제 보고</div>
+    <a class="sb-nav-item" href="#top">PPC 정전 긴급대응 체계 구축</a>
+    <nav class="sb-nav-sub">
+      <a href="#sec1">1 · 목적 및 배경</a>
+      <a href="#sec2">2 · 결론 및 공유사항</a>
+      <a href="#sec3">3 · 대응 체계 핵심</a>
+      <a href="#sec4">4 · 부서별 R&amp;R</a>
+      <a href="#sec5">5 · 기대효과 및 향후 계획</a>
+    </nav>
+  </aside>
+
+  <!-- ═══ 메인 ═══ -->
+  <main class="main" id="top">
+
+    <div class="page-head">
+      <div class="page-head-text">
+        <h1>PPC 정전 긴급대응 체계 구축</h1>
+        <div class="h1-sub">과제 보고</div>
+      </div>
+      <div class="head-btns">
+        <a class="btn btn-dark" href="https://geonmyung.github.io/bmart-guide/" target="_blank">⚡ 대응 가이드 바로가기 ↗</a>
+      </div>
+    </div>
+
+    <div class="meta-line">
+      PPC 정전 긴급대응 체계 구축 · 담당 <strong>B마트운영팀</strong> · 진행 기간 <strong>2026.06 ~ 운영 중</strong>
+    </div>
+    <div class="status-pill"><span class="status-dot"></span> 가이드 구축 완료 · 현장 배포 운영 중</div>
+
+    <!-- ═══ 1. 목적 및 배경 ═══ -->
+    <section class="section" id="sec1">
+      <div class="sec-head">
+        <span class="sec-num">1</span>
+        <span class="sec-title">목적 및 배경</span>
+        <span class="sec-desc">과제 추진 배경 · 해결하고자 하는 문제사항</span>
+      </div>
+      <div class="card">
+        <div class="card-headline">정전 발생 시 표준 대응 절차 부재 → 현장 혼선과 복구 지연으로 직결</div>
+        <p class="card-body">
+          PPC 정전은 예고 없이 발생하며, 주문·피킹·워크인(냉장/냉동) 전반이 동시에 멈추는 고위험 이슈.
+          골든타임 내 초기 대응과 유관부서 공조가 복구 속도와 상품 폐기 규모를 좌우하나, 그동안 표준화된 절차 없이 현장 개인 역량에 의존해 옴.
+        </p>
+        <div class="problem-grid">
+          <div class="problem">
+            <span class="problem-chip">문제 1</span>
+            <h3>초기 대응이 관리자 개인 역량에 의존</h3>
+            <p>정전 직후 무엇부터 해야 하는지 기준 부재. 집결·보고·원인 파악 순서가 현장마다 달라 보고 지연, 누락 발생. 야간·관리자 부재 시 대응 공백 리스크.</p>
+          </div>
+          <div class="problem">
+            <span class="problem-chip">문제 2</span>
+            <h3>유관부서 R&amp;R · 소통 채널 불명확</h3>
+            <p>PPC ↔ GM/팀장 ↔ 공간구현팀 ↔ 품질관리팀 간 누가 · 언제 · 무엇을 하는지 정의 부재. 주문 차단, 취소, 온도 관리 등 시간이 생명인 의사결정이 지연.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ 2. 결론 및 공유사항 ═══ -->
+    <section class="section" id="sec2">
+      <div class="sec-head">
+        <span class="sec-num">2</span>
+        <span class="sec-title">결론 및 공유사항</span>
+        <span class="sec-desc">본 과제의 핵심 결론과 공유 사항</span>
+      </div>
+      <div class="key-summary">
+        <span class="ks-chip">KEY SUMMARY</span>
+        <div class="ks-headline">
+          시간대별 표준 행동 + 전사 타임라인 정의 → 모바일 웹 가이드 배포<br>
+          → 정전 발생 시 <u>누구든, 어느 PPC든</u> 동일하게 대응
+        </div>
+        <dl class="ks-rows">
+          <div class="ks-row">
+            <dt>PPC 표준 행동</dt>
+            <dd>정전 발생 <strong>0분부터 복전까지</strong> 시간대별(0-5 / 5-10 / 10-20 / 20-30 / 30+ / 60분)로 현장이 해야 할 행동을 체크리스트화.</dd>
+          </div>
+          <div class="ks-row">
+            <dt>전사 타임라인</dt>
+            <dd>PPC · GM/팀장 · 공간구현팀 · 커머스품질관리팀 <strong>4개 주체의 R&amp;R</strong>을 STEP 1~6 + 복전 단계로 한 장에 정의.</dd>
+          </div>
+          <div class="ks-row">
+            <dt>소통 체계</dt>
+            <dd>최초 보고는 긴급상황대응방 워크플로우(유관부서 자동 태그), 이후 <strong>이슈 전용 채널(YYYYMMDD-PPC명-이슈)</strong>로 전환해 전사 장애대응 일원화.</dd>
+          </div>
+          <div class="ks-row">
+            <dt>배포 방식</dt>
+            <dd>모바일 최적화 <strong>웹 가이드</strong>로 배포 — 정전 상황에서도 PDA·휴대폰으로 즉시 조회, 사진 예시·슬랙 보고 양식 복사 기능 내장.</dd>
+          </div>
+        </dl>
+      </div>
+    </section>
+
+    <!-- ═══ 3. 대응 체계 핵심 ═══ -->
+    <section class="section" id="sec3">
+      <div class="sec-head">
+        <span class="sec-num">3</span>
+        <span class="sec-title">대응 체계 핵심</span>
+        <span class="sec-desc">3단계 Phase · 시간대별 표준 행동</span>
+      </div>
+
+      <div class="phase-flow">
+        <div class="phase-card p1">
+          <div class="phase-label">PHASE 1</div>
+          <div class="phase-name">초기 대응</div>
+          <div class="phase-time">발생 ~ 10분</div>
+          <ul>
+            <li>전 작업 중단 · 패킹대 집결 (재해 의심 시 즉각 대피)</li>
+            <li>워크플로우 최초 보고 → 유관부서 자동 태그</li>
+            <li>관리소 방문, 정전 원인 · 복구 예상 시점 파악</li>
+          </ul>
+        </div>
+        <div class="phase-card p2">
+          <div class="phase-label">PHASE 2</div>
+          <div class="phase-name">상황 대응</div>
+          <div class="phase-time">10분 ~ 60분</div>
+          <ul>
+            <li>긴급운영중단(주문차단) · 예약주문 취소 처리</li>
+            <li>분전반 차단기 OFF · 워크인 온도 관리</li>
+            <li>전산망(핫스팟·VPN) 확보, 장기화 시 긴급 허들</li>
+          </ul>
+        </div>
+        <div class="phase-card p3">
+          <div class="phase-label">PHASE 3</div>
+          <div class="phase-name">복전 · 정상화</div>
+          <div class="phase-time">복전 시점 ~</div>
+          <ul>
+            <li>차단기 ON · 컨트롤러 재가동 · 상품 원복</li>
+            <li>입고완료율 70% 확인 후 주문차단 해제</li>
+            <li>품질 검품 · 타임라인 정리 · 사후 보고</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-headline" style="font-size:16px;">⏱ PPC 시간대별 표준 행동 한눈에 보기</div>
+        <div class="step-strip">
+          <div class="step-item">
+            <span class="step-time">0-5분</span>
+            <div class="step-label">집결 · 1차 보고</div>
+            <div class="step-sub">작업 중단, 워크플로우 제출</div>
+          </div>
+          <div class="step-item">
+            <span class="step-time">5-10분</span>
+            <div class="step-label">원인 파악</div>
+            <div class="step-sub">관리소 방문 · 분전반 확인</div>
+          </div>
+          <div class="step-item">
+            <span class="step-time">10-20분</span>
+            <div class="step-label">시야 확보 · 상황 정리</div>
+            <div class="step-sub">조명 확보, 라이더 서포트</div>
+          </div>
+          <div class="step-item">
+            <span class="step-time">20-30분</span>
+            <div class="step-label">전산망 확보</div>
+            <div class="step-sub">CS 노트북 핫스팟 · VPN</div>
+          </div>
+          <div class="step-item">
+            <span class="step-time">30분+</span>
+            <div class="step-label">복전 대비</div>
+            <div class="step-sub">인력 구인, PDA VPN 연결</div>
+          </div>
+          <div class="step-item warn">
+            <span class="step-time">60분</span>
+            <div class="step-label">장기화 대응</div>
+            <div class="step-sub">긴급 허들 소집</div>
+          </div>
+          <div class="step-item done">
+            <span class="step-time">복전</span>
+            <div class="step-label">정상화 9단계</div>
+            <div class="step-sub">원복 → 검품 → 영업 재개</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ 4. 부서별 R&R ═══ -->
+    <section class="section" id="sec4">
+      <div class="sec-head">
+        <span class="sec-num">4</span>
+        <span class="sec-title">부서별 R&amp;R</span>
+        <span class="sec-desc">전사 타임라인 상 4개 주체의 핵심 역할</span>
+      </div>
+      <div class="rr-grid">
+        <div class="rr-card">
+          <div class="rr-icon">🏭</div>
+          <div class="rr-name">PPC</div>
+          <div class="rr-role">관리자 · (선임급)크루</div>
+          <ul>
+            <li>현장 초기 대응 · 시간대별 보고 (1~4차)</li>
+            <li>온도 측정 · 분전반 조치 수행</li>
+            <li>복전 시 정상화 9단계 실행</li>
+          </ul>
+        </div>
+        <div class="rr-card">
+          <div class="rr-icon">📋</div>
+          <div class="rr-name">B마트운영팀 리더</div>
+          <div class="rr-role">GM / 팀장</div>
+          <ul>
+            <li>긴급운영중단 · 주문취소 의사결정</li>
+            <li>리더채널 공유 · 전사 장애 채널 구성</li>
+            <li>인력 충원 · 장기화 시 긴급 허들 소집</li>
+          </ul>
+        </div>
+        <div class="rr-card">
+          <div class="rr-icon">🔧</div>
+          <div class="rr-name">공간구현팀</div>
+          <div class="rr-role">설비 · 시설</div>
+          <ul>
+            <li>관리소 공조 · 정전 원인 규명</li>
+            <li>분전반 차단기 OFF/ON 지시</li>
+            <li>설비 이슈 시 업체 수배 · 초동조치</li>
+          </ul>
+        </div>
+        <div class="rr-card">
+          <div class="rr-icon">📦</div>
+          <div class="rr-name">커머스품질관리팀</div>
+          <div class="rr-role">상품 품질</div>
+          <ul>
+            <li>온도 이탈 상품 판매가능 여부 판단</li>
+            <li>관능검사 가이드 제공 · 검품 지원</li>
+            <li>장기화 시 폐기 산출 · 복전 시 검품</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ 5. 기대효과 및 향후 계획 ═══ -->
+    <section class="section" id="sec5">
+      <div class="sec-head">
+        <span class="sec-num">5</span>
+        <span class="sec-title">기대효과 및 향후 계획</span>
+        <span class="sec-desc">체계 구축으로 확보되는 것</span>
+      </div>
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="stat-num">10<small>분</small></div>
+          <div class="stat-label">원인 파악 · 전사 공유 완료</div>
+          <div class="stat-sub">발생 즉시 워크플로우 자동 태그 보고</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">4<small>개 부서</small></div>
+          <div class="stat-label">R&amp;R 사전 정의</div>
+          <div class="stat-sub">의사결정 지연 · 책임 공백 제거</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">1<small>장</small></div>
+          <div class="stat-label">현장용 모바일 가이드</div>
+          <div class="stat-sub">암전 상태에서도 PDA · 폰으로 즉시 조회</div>
+        </div>
+      </div>
+      <div class="next-list">
+        <div class="next-item">
+          <span class="next-num">1</span>
+          <p><strong>전 PPC 전파 및 현장 훈련</strong> — 관리자 대상 가이드 교육, 정전 모의 대응 점검으로 체화</p>
+        </div>
+        <div class="next-item">
+          <span class="next-num">2</span>
+          <p><strong>이슈 유형 확장</strong> — 워크인 온도 이슈 등 동일 프레임(시간대별 행동 + 전사 타임라인)으로 대응 가이드 확대</p>
+        </div>
+        <div class="next-item">
+          <span class="next-num">3</span>
+          <p><strong>실사례 기반 고도화</strong> — 실제 정전 대응 타임라인 회고를 가이드에 반영, 지속 업데이트</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="footer">⚡ B마트 정전 긴급대응 체계 구축 · 과제 보고</div>
+
+  </main>
+</div>
+
+</body>
+</html>
