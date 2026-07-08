@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PPC 정전 긴급대응 체계 구축 · 과제 보고</title>
+<title>PPC 이슈대응 가이드 — 정전 · 워크인 · 과제 보고</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -55,7 +55,6 @@
     text-decoration: none; transition: transform .12s, box-shadow .12s;
   }
   .btn:hover { transform: translateY(-1px); }
-  .btn-outline { background: #fff; color: #334155; border: 1px solid #E2E8F0; box-shadow: 0 1px 3px rgba(15,23,42,.06); }
   .btn-dark { background: #0F172A; color: #fff; box-shadow: 0 4px 14px rgba(15,23,42,.25); }
 
   .meta-line { margin-top: 18px; font-size: 13.5px; color: #94A3B8; }
@@ -117,20 +116,20 @@
   .ks-row dd { color: #E2E8F0; }
   .ks-row dd strong { color: #2DD4BF; }
 
-  /* ── Phase 플로우 ── */
+  /* ── 유형 카드 ── */
   .phase-flow { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-top: 20px; }
   .phase-card {
     background: #fff; border-radius: 16px; padding: 24px 26px; position: relative;
     box-shadow: 0 1px 3px rgba(15,23,42,.06), 0 8px 24px rgba(15,23,42,.04);
     border-top: 4px solid;
   }
-  .phase-card.p1 { border-color: #EF4444; }
+  .phase-card.p1 { border-color: #3B82F6; }
   .phase-card.p2 { border-color: #F59E0B; }
-  .phase-card.p3 { border-color: #10B981; }
+  .phase-card.p3 { border-color: #EF4444; }
   .phase-label { font-size: 12px; font-weight: 800; letter-spacing: 1px; }
-  .p1 .phase-label { color: #EF4444; }
+  .p1 .phase-label { color: #2563EB; }
   .p2 .phase-label { color: #D97706; }
-  .p3 .phase-label { color: #059669; }
+  .p3 .phase-label { color: #DC2626; }
   .phase-name { margin-top: 6px; font-size: 17px; font-weight: 800; letter-spacing: -0.3px; }
   .phase-time { font-size: 12.5px; color: #94A3B8; font-weight: 600; margin-top: 2px; }
   .phase-card ul { margin-top: 14px; padding-left: 0; list-style: none; }
@@ -159,22 +158,33 @@
   .step-label { margin-top: 10px; font-size: 13px; font-weight: 700; color: #334155; line-height: 1.45; }
   .step-sub { font-size: 11.5px; color: #94A3B8; margin-top: 3px; line-height: 1.4; }
 
-  /* ── R&R 그리드 ── */
-  .rr-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 20px; }
-  .rr-card {
-    background: #fff; border-radius: 14px; padding: 22px;
+  /* ── 대응 플로우 (변화 카드 안) ── */
+  .change-block { margin-top: 20px; padding: 20px 24px; background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; }
+  .change-block h4 { font-size: 14.5px; font-weight: 800; letter-spacing: -0.3px; display: flex; align-items: center; gap: 8px; }
+  .change-block h4 .tag {
+    display: inline-block; padding: 2px 8px; border-radius: 5px; font-size: 11px; font-weight: 800; color: #fff;
+  }
+  .change-block ul { margin-top: 10px; list-style: none; }
+  .change-block li { font-size: 13.5px; color: #475569; padding: 4px 0 4px 16px; position: relative; }
+  .change-block li::before {
+    content: ''; position: absolute; left: 0; top: 12px;
+    width: 6px; height: 6px; border-radius: 50%; background: #CBD5E1;
+  }
+  .change-block li strong { color: #0F172A; }
+
+  /* ── 지표 카드 (워크인) ── */
+  .kpi-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-top: 20px; }
+  .kpi-card {
+    background: #fff; border-radius: 14px; padding: 24px; text-align: center;
     box-shadow: 0 1px 3px rgba(15,23,42,.06), 0 8px 24px rgba(15,23,42,.04);
+    border-top: 4px solid #F59E0B;
   }
-  .rr-icon { font-size: 22px; }
-  .rr-name { margin-top: 8px; font-size: 14.5px; font-weight: 800; letter-spacing: -0.3px; }
-  .rr-role { font-size: 11.5px; color: #94A3B8; font-weight: 600; margin-top: 1px; }
-  .rr-card ul { margin-top: 12px; list-style: none; }
-  .rr-card li {
-    font-size: 12.5px; color: #475569; padding: 4px 0 4px 14px; position: relative; line-height: 1.5;
-  }
-  .rr-card li::before {
-    content: ''; position: absolute; left: 0; top: 11px;
-    width: 5px; height: 5px; border-radius: 50%; background: #CBD5E1;
+  .kpi-num { font-size: 26px; font-weight: 800; letter-spacing: -0.5px; color: #B45309; }
+  .kpi-label { margin-top: 6px; font-size: 13.5px; font-weight: 700; color: #334155; }
+  .alert-strip {
+    margin-top: 16px; padding: 16px 22px; border-radius: 12px;
+    background: #FEF2F2; border: 1px solid #FECACA;
+    font-size: 14px; font-weight: 700; color: #B91C1C; text-align: center;
   }
 
   /* ── 효과 스탯 ── */
@@ -208,8 +218,7 @@
   @media (max-width: 1024px) {
     .sidebar { display: none; }
     .main { padding: 32px 20px 60px; }
-    .problem-grid, .phase-flow, .stat-grid { grid-template-columns: 1fr; }
-    .rr-grid { grid-template-columns: 1fr 1fr; }
+    .problem-grid, .phase-flow, .stat-grid, .kpi-grid { grid-template-columns: 1fr; }
     .step-strip { flex-wrap: wrap; gap: 14px 0; }
     .step-item { flex: 0 0 33.3%; }
     h1 { font-size: 25px; }
@@ -222,17 +231,16 @@
 
   <!-- ═══ 사이드바 ═══ -->
   <aside class="sidebar">
-    <div class="sb-team">B마트운영팀 · 커머스운영센터</div>
+    <div class="sb-team">물류정책파트 · 커머스운영센터</div>
     <span class="sb-chip">이슈 대응 체계 보고</span>
     <hr class="sb-divider">
     <div class="sb-label">과제 보고</div>
-    <a class="sb-nav-item" href="#top">PPC 정전 긴급대응 체계 구축</a>
+    <a class="sb-nav-item" href="#top">PPC 이슈대응 가이드 — 정전 · 워크인</a>
     <nav class="sb-nav-sub">
-      <a href="#sec1">1 · 목적 및 배경</a>
-      <a href="#sec2">2 · 결론 및 공유사항</a>
-      <a href="#sec3">3 · 대응 체계 핵심</a>
-      <a href="#sec4">4 · 부서별 R&amp;R</a>
-      <a href="#sec5">5 · 기대효과 및 향후 계획</a>
+      <a href="#sec1">1 · 오프닝 — 추진 배경</a>
+      <a href="#sec2">2 · 상세 — 정전 대응</a>
+      <a href="#sec3">3 · 상세 — 워크인 대응</a>
+      <a href="#sec4">4 · 배포 · 운영 현황</a>
     </nav>
   </aside>
 
@@ -241,7 +249,7 @@
 
     <div class="page-head">
       <div class="page-head-text">
-        <h1>PPC 정전 긴급대응 체계 구축</h1>
+        <h1>PPC 이슈대응 가이드 구축 — 정전 · 워크인</h1>
         <div class="h1-sub">과제 보고</div>
       </div>
       <div class="head-btns">
@@ -250,115 +258,125 @@
     </div>
 
     <div class="meta-line">
-      PPC 정전 긴급대응 체계 구축 · 담당 <strong>B마트운영팀</strong> · 진행 기간 <strong>2026.06 ~ 운영 중</strong>
+      PPC 이슈대응 가이드 구축 · 담당 <strong>물류정책파트</strong> · <strong>2026.06.22 배포</strong> ~ 운영 · 모니터링 중
     </div>
-    <div class="status-pill"><span class="status-dot"></span> 가이드 구축 완료 · 현장 배포 운영 중</div>
+    <div class="status-pill"><span class="status-dot"></span> 운영 3주차 · 이슈 8건 전 건 대응 · 정책 준수율 91%</div>
 
-    <!-- ═══ 1. 목적 및 배경 ═══ -->
+    <!-- ═══ 1. 오프닝 — 추진 배경 ═══ -->
     <section class="section" id="sec1">
       <div class="sec-head">
         <span class="sec-num">1</span>
-        <span class="sec-title">목적 및 배경</span>
-        <span class="sec-desc">과제 추진 배경 · 해결하고자 하는 문제사항</span>
-      </div>
-      <div class="card">
-        <div class="card-headline">정전 발생 시 표준 대응 절차 부재 → 현장 혼선과 복구 지연으로 직결</div>
-        <p class="card-body">
-          PPC 정전은 예고 없이 발생하며, 주문·피킹·워크인(냉장/냉동) 전반이 동시에 멈추는 고위험 이슈.
-          골든타임 내 초기 대응과 유관부서 공조가 복구 속도와 상품 폐기 규모를 좌우하나, 그동안 표준화된 절차 없이 현장 개인 역량에 의존해 옴.
-        </p>
-        <div class="problem-grid">
-          <div class="problem">
-            <span class="problem-chip">문제 1</span>
-            <h3>초기 대응이 관리자 개인 역량에 의존</h3>
-            <p>정전 직후 무엇부터 해야 하는지 기준 부재. 집결·보고·원인 파악 순서가 현장마다 달라 보고 지연, 누락 발생. 야간·관리자 부재 시 대응 공백 리스크.</p>
-          </div>
-          <div class="problem">
-            <span class="problem-chip">문제 2</span>
-            <h3>유관부서 R&amp;R · 소통 채널 불명확</h3>
-            <p>PPC ↔ GM/팀장 ↔ 공간구현팀 ↔ 품질관리팀 간 누가 · 언제 · 무엇을 하는지 정의 부재. 주문 차단, 취소, 온도 관리 등 시간이 생명인 의사결정이 지연.</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ═══ 2. 결론 및 공유사항 ═══ -->
-    <section class="section" id="sec2">
-      <div class="sec-head">
-        <span class="sec-num">2</span>
-        <span class="sec-title">결론 및 공유사항</span>
-        <span class="sec-desc">본 과제의 핵심 결론과 공유 사항</span>
+        <span class="sec-title">오프닝 — 추진 배경</span>
+        <span class="sec-desc">왜 정전 · 워크인부터인가</span>
       </div>
       <div class="key-summary">
         <span class="ks-chip">KEY SUMMARY</span>
         <div class="ks-headline">
-          시간대별 표준 행동 + 전사 타임라인 정의 → 모바일 웹 가이드 배포<br>
-          → 정전 발생 시 <u>누구든, 어느 PPC든</u> 동일하게 대응
+          물류조직 4개 부서 + 우형 3개 부서가 합의한 <u>하나의 공통 프로토콜</u>로 통합
         </div>
         <dl class="ks-rows">
           <div class="ks-row">
-            <dt>PPC 표준 행동</dt>
-            <dd>정전 발생 <strong>0분부터 복전까지</strong> 시간대별(0-5 / 5-10 / 10-20 / 20-30 / 30+ / 60분)로 현장이 해야 할 행동을 체크리스트화.</dd>
+            <dt>협의 부서</dt>
+            <dd><strong>물류조직 4</strong> (안전 · 시설 · 운영 · 품질) + <strong>우형 3</strong> (플랫폼 · 사업 · 커머스CX) — 부서별 요구사항을 하나의 타임라인으로 정렬.</dd>
           </div>
           <div class="ks-row">
-            <dt>전사 타임라인</dt>
-            <dd>PPC · GM/팀장 · 공간구현팀 · 커머스품질관리팀 <strong>4개 주체의 R&amp;R</strong>을 STEP 1~6 + 복전 단계로 한 장에 정의.</dd>
+            <dt>지휘 체계</dt>
+            <dd><strong>GM/팀장이 컨트롤 타워</strong> — 긴급운영중단 등 최종 의사결정, 현장은 시간대별 표준 행동 수행.</dd>
           </div>
           <div class="ks-row">
-            <dt>소통 체계</dt>
-            <dd>최초 보고는 긴급상황대응방 워크플로우(유관부서 자동 태그), 이후 <strong>이슈 전용 채널(YYYYMMDD-PPC명-이슈)</strong>로 전환해 전사 장애대응 일원화.</dd>
-          </div>
-          <div class="ks-row">
-            <dt>배포 방식</dt>
-            <dd>모바일 최적화 <strong>웹 가이드</strong>로 배포 — 정전 상황에서도 PDA·휴대폰으로 즉시 조회, 사진 예시·슬랙 보고 양식 복사 기능 내장.</dd>
+            <dt>접근성</dt>
+            <dd>모바일 최적화 <strong>웹 가이드</strong>로 배포 — 정전 중에도 휴대폰 데이터로 즉시 조회, 슬랙 보고 양식 복사 기능 내장.</dd>
           </div>
         </dl>
       </div>
+      <div class="card">
+        <div class="card-headline">여름철 최우선 크리티컬 이슈 '정전 · 워크인'부터 대응 가이드 구축</div>
+        <p class="card-body">
+          PPC 이슈대응 가이드 체계화의 첫 과제. 여름철 시급성이 가장 높은 정전·워크인(냉장/냉동 창고)을 우선 착수해
+          <strong>6/22 배포 완료, 현재 운영 · 모니터링 중.</strong> 이후 타 이슈로 동일 프레임 확장 예정.
+        </p>
+        <div class="problem-grid">
+          <div class="problem">
+            <span class="problem-chip">문제 1</span>
+            <h3>부서별 프로토콜은 있었지만, 현장에선 혼선</h3>
+            <p>품질 "상품 검품 요청" · 공간구현 "설비 온도, 분전반 트립 확인" · 안전 "구성원 대피" · 운영 "VPN 연결, 주문 처리" — 각자 프로토콜이 동시에 내려와 <strong>현장 관리자는 뭐부터 해야 할지 알 수 없었음.</strong></p>
+          </div>
+          <div class="problem">
+            <span class="problem-chip">문제 2</span>
+            <h3>정전 = 네트워크 소실, 문서 접근 불가</h3>
+            <p>기존 대응 문서는 인터넷(사내망)에 있어 정작 정전 상황에서는 <strong>열어볼 수 없음.</strong> 현장에서 즉시 조회 가능한 접근성 확보 필요.</p>
+          </div>
+        </div>
+      </div>
     </section>
 
-    <!-- ═══ 3. 대응 체계 핵심 ═══ -->
-    <section class="section" id="sec3">
+    <!-- ═══ 2. 상세 — 정전 대응 ═══ -->
+    <section class="section" id="sec2">
       <div class="sec-head">
-        <span class="sec-num">3</span>
-        <span class="sec-title">대응 체계 핵심</span>
-        <span class="sec-desc">3단계 Phase · 시간대별 표준 행동</span>
+        <span class="sec-num">2</span>
+        <span class="sec-title">상세 — 정전 대응</span>
+        <span class="sec-desc">유형 3분류 · 타임라인별 표준 행동</span>
       </div>
 
       <div class="phase-flow">
         <div class="phase-card p1">
-          <div class="phase-label">PHASE 1</div>
-          <div class="phase-name">초기 대응</div>
-          <div class="phase-time">발생 ~ 10분</div>
+          <div class="phase-label">유형 1</div>
+          <div class="phase-name">예고된 정전</div>
+          <div class="phase-time">사전 공지 (건물 점검 등)</div>
           <ul>
-            <li>전 작업 중단 · 패킹대 집결 (재해 의심 시 즉각 대피)</li>
-            <li>워크플로우 최초 보고 → 유관부서 자동 태그</li>
-            <li>관리소 방문, 정전 원인 · 복구 예상 시점 파악</li>
+            <li>사전 준비 · 계획 대응</li>
+            <li>상품 보호 조치 선행</li>
           </ul>
         </div>
         <div class="phase-card p2">
-          <div class="phase-label">PHASE 2</div>
-          <div class="phase-name">상황 대응</div>
-          <div class="phase-time">10분 ~ 60분</div>
+          <div class="phase-label">유형 2</div>
+          <div class="phase-name">단기성 정전</div>
+          <div class="phase-time">순단 ~ 단시간 복전</div>
           <ul>
-            <li>긴급운영중단(주문차단) · 예약주문 취소 처리</li>
-            <li>분전반 차단기 OFF · 워크인 온도 관리</li>
-            <li>전산망(핫스팟·VPN) 확보, 장기화 시 긴급 허들</li>
+            <li>복전 · 네트워크 확인 후 보고</li>
+            <li>온도 특이사항 점검</li>
           </ul>
         </div>
         <div class="phase-card p3">
-          <div class="phase-label">PHASE 3</div>
-          <div class="phase-name">복전 · 정상화</div>
-          <div class="phase-time">복전 시점 ~</div>
+          <div class="phase-label">유형 3</div>
+          <div class="phase-name">장기성 정전</div>
+          <div class="phase-time">복구 지연 · 장기화</div>
           <ul>
-            <li>차단기 ON · 컨트롤러 재가동 · 상품 원복</li>
-            <li>입고완료율 70% 확인 후 주문차단 해제</li>
-            <li>품질 검품 · 타임라인 정리 · 사후 보고</li>
+            <li>작업 전면 중단 · 긴급운영중단</li>
+            <li>타임라인별 세부 행동 수행</li>
           </ul>
         </div>
       </div>
 
       <div class="card">
-        <div class="card-headline" style="font-size:16px;">⏱ PPC 시간대별 표준 행동 한눈에 보기</div>
+        <div class="card-headline" style="font-size:17px;">🔑 가장 큰 변화 — 장기성 정전 대응</div>
+
+        <div class="change-block">
+          <h4><span class="tag" style="background:#EF4444;">현장</span> 작업 전면 중단 · 2차 사고 차단</h4>
+          <ul>
+            <li><strong>영업 중</strong>(입고 · 피패킹) 정전 → 작업 중단 후 대기</li>
+            <li><strong>하역 중</strong> 정전 → 집결 · 안전 확인 → 손전등 배분 → <strong>PPC 내 입점 RT만 내부 보관</strong> (암전 이동 최소화로 2차 사고 차단)</li>
+          </ul>
+        </div>
+
+        <div class="change-block">
+          <h4><span class="tag" style="background:#0F172A;">주문</span> 긴급운영중단 · 취소 프로세스 정형화</h4>
+          <ul>
+            <li>긴급운영중단(주문차단) → <strong>인입된 주문 + 1시간 내 예약주문 취소</strong></li>
+            <li>커머스CX팀에 주문번호 전달 — <strong>50건 이하 수기취소 / 50건 초과 일괄취소</strong></li>
+          </ul>
+        </div>
+
+        <div class="change-block">
+          <h4><span class="tag" style="background:#059669;">보상</span> 상품 피해 보상 경로 확인</h4>
+          <ul>
+            <li>건물 측 <strong>손해배상 청구</strong> · <strong>재산종합보험</strong> 약관 검토 병행</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-headline" style="font-size:16px;">⏱ 타임라인별 표준 행동</div>
         <div class="step-strip">
           <div class="step-item">
             <span class="step-time">0-5분</span>
@@ -392,105 +410,139 @@
           </div>
           <div class="step-item done">
             <span class="step-time">복전</span>
-            <div class="step-label">정상화 9단계</div>
+            <div class="step-label">정상화</div>
             <div class="step-sub">원복 → 검품 → 영업 재개</div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- ═══ 4. 부서별 R&R ═══ -->
+    <!-- ═══ 3. 상세 — 워크인 대응 ═══ -->
+    <section class="section" id="sec3">
+      <div class="sec-head">
+        <span class="sec-num">3</span>
+        <span class="sec-title">상세 — 워크인 대응</span>
+        <span class="sec-desc">냉동 상품 보호 기준 · 단계별 대응</span>
+      </div>
+
+      <div class="card">
+        <div class="card-headline">1.5시간 내 슬라이드 냉동고 확보 가능한 환경 마련</div>
+        <p class="card-body">워크인(냉장/냉동 창고) 이슈 발생 시 상품 판매 불가 여부를 판단하는 <strong>트래킹 지표 3개</strong>를 설정 — 기준이 사람마다 다르던 판단을 정량화.</p>
+
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-num">-10℃</div>
+            <div class="kpi-label">온도 이탈</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-num">과반</div>
+            <div class="kpi-label">쿨러 이슈 발생</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-num">5시간</div>
+            <div class="kpi-label">내 수리 불가</div>
+          </div>
+        </div>
+        <div class="alert-strip">⚠️ 2개 이상 부합 시 → 상품 판매 불가 판단 · 긴급 허들 소집 · 운영 대응 전환</div>
+      </div>
+
+      <div class="card">
+        <div class="card-headline" style="font-size:16px;">🧊 단계별 상품 보호</div>
+        <div class="next-list" style="margin-top:14px;">
+          <div class="next-item">
+            <span class="next-num" style="background:#DBEAFE; color:#1D4ED8;">1차</span>
+            <p><strong>슬라이드 냉동고 이동</strong> — 1.5시간 내 확보, 냉동 상품 우선 대피</p>
+          </div>
+          <div class="next-item">
+            <span class="next-num" style="background:#FEE2E2; color:#B91C1C;">2차</span>
+            <p><strong>냉동탑차 호출</strong> — 프리미엄 상품 보관, 선도 리스크 최소화</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ 4. 배포 · 운영 현황 ═══ -->
     <section class="section" id="sec4">
       <div class="sec-head">
         <span class="sec-num">4</span>
-        <span class="sec-title">부서별 R&amp;R</span>
-        <span class="sec-desc">전사 타임라인 상 4개 주체의 핵심 역할</span>
+        <span class="sec-title">배포 · 운영 현황</span>
+        <span class="sec-desc">6/22 배포 이후 · 모니터링 시트 기반 (2026.06.24 ~ 07.06)</span>
       </div>
-      <div class="rr-grid">
-        <div class="rr-card">
-          <div class="rr-icon">🏭</div>
-          <div class="rr-name">PPC</div>
-          <div class="rr-role">관리자 · (선임급)크루</div>
-          <ul>
-            <li>현장 초기 대응 · 시간대별 보고 (1~4차)</li>
-            <li>온도 측정 · 분전반 조치 수행</li>
-            <li>복전 시 정상화 9단계 실행</li>
-          </ul>
-        </div>
-        <div class="rr-card">
-          <div class="rr-icon">📋</div>
-          <div class="rr-name">B마트운영팀 리더</div>
-          <div class="rr-role">GM / 팀장</div>
-          <ul>
-            <li>긴급운영중단 · 주문취소 의사결정</li>
-            <li>리더채널 공유 · 전사 장애 채널 구성</li>
-            <li>인력 충원 · 장기화 시 긴급 허들 소집</li>
-          </ul>
-        </div>
-        <div class="rr-card">
-          <div class="rr-icon">🔧</div>
-          <div class="rr-name">공간구현팀</div>
-          <div class="rr-role">설비 · 시설</div>
-          <ul>
-            <li>관리소 공조 · 정전 원인 규명</li>
-            <li>분전반 차단기 OFF/ON 지시</li>
-            <li>설비 이슈 시 업체 수배 · 초동조치</li>
-          </ul>
-        </div>
-        <div class="rr-card">
-          <div class="rr-icon">📦</div>
-          <div class="rr-name">커머스품질관리팀</div>
-          <div class="rr-role">상품 품질</div>
-          <ul>
-            <li>온도 이탈 상품 판매가능 여부 판단</li>
-            <li>관능검사 가이드 제공 · 검품 지원</li>
-            <li>장기화 시 폐기 산출 · 복전 시 검품</li>
-          </ul>
-        </div>
-      </div>
-    </section>
 
-    <!-- ═══ 5. 기대효과 및 향후 계획 ═══ -->
-    <section class="section" id="sec5">
-      <div class="sec-head">
-        <span class="sec-num">5</span>
-        <span class="sec-title">기대효과 및 향후 계획</span>
-        <span class="sec-desc">체계 구축으로 확보되는 것</span>
-      </div>
-      <div class="stat-grid">
-        <div class="stat-card">
-          <div class="stat-num">10<small>분</small></div>
-          <div class="stat-label">원인 파악 · 전사 공유 완료</div>
-          <div class="stat-sub">발생 즉시 워크플로우 자동 태그 보고</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-num">4<small>개 부서</small></div>
-          <div class="stat-label">R&amp;R 사전 정의</div>
-          <div class="stat-sub">의사결정 지연 · 책임 공백 제거</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-num">1<small>장</small></div>
-          <div class="stat-label">현장용 모바일 가이드</div>
-          <div class="stat-sub">암전 상태에서도 PDA · 폰으로 즉시 조회</div>
-        </div>
-      </div>
       <div class="next-list">
         <div class="next-item">
-          <span class="next-num">1</span>
-          <p><strong>전 PPC 전파 및 현장 훈련</strong> — 관리자 대상 가이드 교육, 정전 모의 대응 점검으로 체화</p>
+          <span class="next-num">✓</span>
+          <p><strong>현장 온라인 설명회 3회</strong> 진행 (6/22 배포 이후) · <strong>SOP 수정 배포 완료</strong></p>
         </div>
         <div class="next-item">
-          <span class="next-num">2</span>
-          <p><strong>이슈 유형 확장</strong> — 워크인 온도 이슈 등 동일 프레임(시간대별 행동 + 전사 타임라인)으로 대응 가이드 확대</p>
+          <span class="next-num">✓</span>
+          <p><strong>이슈 로그 트래킹 시트 운영</strong> — 건별 정책 이행 여부 추적, 대부분 준수</p>
         </div>
-        <div class="next-item">
-          <span class="next-num">3</span>
-          <p><strong>실사례 기반 고도화</strong> — 실제 정전 대응 타임라인 회고를 가이드에 반영, 지속 업데이트</p>
+      </div>
+
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="stat-num">8<small>건</small></div>
+          <div class="stat-label">발생 이슈 전 건 대응</div>
+          <div class="stat-sub">전 건 순단 · 5분 내 복전 · 장기 정전 0건</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">91<small>%</small></div>
+          <div class="stat-label">정책 준수율</div>
+          <div class="stat-sub">추적 항목 43개 중 39개 이행</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">100<small>%</small></div>
+          <div class="stat-label">최근 4건 연속 완전 이행</div>
+          <div class="stat-sub">7/1 이후 가이드 정착 추세 뚜렷</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-headline" style="font-size:16px;">📊 항목별 준수율</div>
+        <div style="margin-top:16px; display:grid; gap:10px;">
+          <div style="display:flex; align-items:center; gap:14px;">
+            <span style="width:150px; flex-shrink:0; font-size:13px; font-weight:700;">최초보고</span>
+            <div style="flex:1; height:10px; background:#F1F5F9; border-radius:99px; overflow:hidden;"><div style="width:100%; height:100%; background:#10B981; border-radius:99px;"></div></div>
+            <span style="width:70px; font-size:12.5px; font-weight:700; color:#059669; text-align:right;">100% (8/8)</span>
+          </div>
+          <div style="display:flex; align-items:center; gap:14px;">
+            <span style="width:150px; flex-shrink:0; font-size:13px; font-weight:700;">복전 · 네트워크 보고</span>
+            <div style="flex:1; height:10px; background:#F1F5F9; border-radius:99px; overflow:hidden;"><div style="width:100%; height:100%; background:#10B981; border-radius:99px;"></div></div>
+            <span style="width:70px; font-size:12.5px; font-weight:700; color:#059669; text-align:right;">100%</span>
+          </div>
+          <div style="display:flex; align-items:center; gap:14px;">
+            <span style="width:150px; flex-shrink:0; font-size:13px; font-weight:700;">체크리스트 수행</span>
+            <div style="flex:1; height:10px; background:#F1F5F9; border-radius:99px; overflow:hidden;"><div style="width:83%; height:100%; background:#10B981; border-radius:99px;"></div></div>
+            <span style="width:70px; font-size:12.5px; font-weight:700; color:#059669; text-align:right;">83% (5/6)</span>
+          </div>
+          <div style="display:flex; align-items:center; gap:14px;">
+            <span style="width:150px; flex-shrink:0; font-size:13px; font-weight:700;">워크플로우 봇 접수</span>
+            <div style="flex:1; height:10px; background:#F1F5F9; border-radius:99px; overflow:hidden;"><div style="width:63%; height:100%; background:#F59E0B; border-radius:99px;"></div></div>
+            <span style="width:70px; font-size:12.5px; font-weight:700; color:#D97706; text-align:right;">63% (5/8)</span>
+          </div>
+        </div>
+        <p style="margin-top:16px; font-size:13px; color:#64748B;">
+          <strong style="color:#D97706;">개선 포인트</strong> — 순단(짧은 정전) 시 워크플로우 봇 접수 누락이 초기 3건에서 발생. 순단 정의 · 집결 예외 기준 명문화로 보완 중이며, 7/1 이후 전 항목 100% 이행.
+        </p>
+      </div>
+
+      <div class="card">
+        <div class="card-headline" style="font-size:16px;">🍦 워크인 — 향후 계획</div>
+        <div class="next-list" style="margin-top:14px;">
+          <div class="next-item">
+            <span class="next-num">1</span>
+            <p><strong>아이스크림 기획전 기간</strong> — 자체 검품 강화 운영</p>
+          </div>
+          <div class="next-item">
+            <span class="next-num">2</span>
+            <p><strong>행사 이후</strong> — 그룹별 슬라이드 냉동고 버퍼 수량 <strong>4대씩 보관</strong> · <strong>10대 추가 구매 예정</strong></p>
+          </div>
         </div>
       </div>
     </section>
 
-    <div class="footer">⚡ B마트 정전 긴급대응 체계 구축 · 과제 보고</div>
+    <div class="footer">⚡ PPC 이슈대응 가이드 구축 — 정전 · 워크인 · 과제 보고</div>
 
   </main>
 </div>
